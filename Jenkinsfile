@@ -15,10 +15,7 @@ pipeline{
                 }
             }
         }
-    }
 
-
-    stages {
         stage('Clone Repo'){
             steps{
                 git 'https://github.com/Timwes21/spideypedia.git'
