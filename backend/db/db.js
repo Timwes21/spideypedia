@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 
 
 const env = (e) => process.env[e]
-const client = new MongoClient(env("url"), {
+const client = new MongoClient(env("URL"), {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
