@@ -1,0 +1,293 @@
+@font-face {
+  font-family: "spider-man-font";
+  src: url("The Amazing Spider-Man.ttf");
+}
+
+@font-face {
+  font-family: "comic-lettering";
+  src: url("digistrip.ttf");
+}
+
+@font-face {
+  font-family: "comic-lettering-italic";
+  src: url("digistrip_b.ttf");
+}
+
+@font-face {
+  font-family: "comic-header";
+  src: url("jcandlestick.ttf");
+}
+
+@font-face {
+  font-family: "character-font";
+  src: url("Springwood Display DEMO.otf");
+}
+
+:root {
+  /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  line-height: 1.5;
+  font-weight: 400;
+  
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(190, 190, 190);
+  background-size: cover;
+}
+
+body{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.tables{
+  display: flex;
+  justify-content:space-around;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+ }
+.table{
+  width: 35vw;
+  height: 80vh;
+  display: flex;
+  align-items:center;
+  background-color: rgb(255, 80, 80);
+  flex-direction: column;
+  box-shadow: 0px 0px 5px black;
+  /* border: 5px solid black; */
+  /* border-radius: 15px; */
+}
+.table-header{
+  /* -webkit-text-stroke: 2px black; */
+  background-color: rgb(0, 197, 191);
+  display: flex;
+  justify-content: center;
+  border: 3px solid black;
+  align-items: center;
+  width: 100%;
+  font-family: "comic-header";
+  color: rgb(0, 0, 0);
+}
+.table-contents{
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  flex-direction: column;
+}
+#collection-table{
+  color: rgb(255, 255, 255);
+}
+#agent-table{
+  
+}
+.heading-button{
+  display: flex;
+  gap: 50px;
+  align-items: center;
+
+  
+}
+button{
+  background-color: rgb(255, 255, 176);
+  font-family: "comic-lettering";
+  color: rgb(0, 0, 0);
+  padding: 10px;
+  margin: 10px;
+  border: 3px solid rgb(0, 0, 0);
+  cursor: pointer;
+}
+.character-list{
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  background-color:rgb(255, 255, 255);
+  border: 3px solid rgb(0, 0, 0);
+  width: 27vw;
+  height: 50vh;
+  color: rgb(255, 255, 255);
+  overflow:auto;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  resize:both;
+  z-index: 1000;
+}
+
+#logout-button{
+  margin-top: 70vh;
+  border: 4px solid black;
+  box-shadow: 0px 0px 5px black;
+  position:fixed;
+  background-color: rgb(0, 183, 6);
+  font-family: fantasy;
+  -webkit-text-stroke: 1px black;
+}
+.add-char{
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.char-name{
+  font-size:xx-large;
+  font-family: "character-font";
+  color: rgb(255, 0, 0);
+  -webkit-text-stroke: 1px black;
+}
+.title-type{
+  color: rgb(0, 0, 0);
+  /* text-shadow: 0px 0px 5px black; */
+  font-size:x-large;
+  font-family: "character-font";
+}
+.title-name{
+  font-style: italic;
+  color: rgb(0, 0, 0);
+  
+}
+.char-header, .char-name, .title-type, .title-name{
+  cursor: pointer;
+}
+.char-header:hover, .char-name:hover, .title-type:hover, .title-name:hover{
+  text-decoration: underline;
+}
+#vol{
+  color: black;
+}
+.make-smaller{
+  font-size:x-small;
+  margin: 0;
+  padding: 2px;
+  opacity: 0;
+  
+}
+.make-smaller:hover{
+  opacity: 1;
+}
+.add-title{
+  display: flex;
+  flex-direction: column;
+  width: 10vw;
+  justify-content: center;
+  justify-self: center;
+  background-color: rgb(0, 0, 0);
+  padding: 5px;
+  border: 1px solid black;
+}
+.buttons-add-title{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.buttons-add-title button{
+  margin: 3px;
+  margin-top: 5px;
+}
+#add-issue{
+  display: flex;
+  gap: 2px;
+  width: 7vw;
+  padding: 0;
+  align-items: center;
+  background-color: rgb(0, 0, 0);
+  border: 1px solid black;
+  flex-direction: column;
+}
+.buttons-add-issue{
+  display: flex;
+  
+  gap: 3px;
+  
+}
+.buttons-add-issue button{
+  padding: 4px;
+  margin: 1px;
+}
+.small-button{
+  font-size:x-small;
+  margin: 0;
+  padding: 2px;
+}
+.label{
+  color: rgb(255, 255, 255);
+}
+input, select{
+  font-family: "comic-lettering";
+  color: black;
+  background-color: rgb(255, 255, 255);
+  border: 0;
+  border-radius: 5px;
+}
+#add-issue-input{
+  width: 4vw;
+}
+.char-contents{
+  margin: 0;
+}
+.issues{
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  background-color: rgb(255, 255, 255);
+  color: black;
+}
+.issue-rundown{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  overflow: auto;
+  align-items:flex-start;
+  border: 0;  
+  margin: 10px;
+  
+}
+.issue-details{
+  border: 3px solid black;
+  background-color: rgb(255, 255, 168);
+  color: rgb(0, 0, 0);
+  display: flex;
+  flex-direction: row;
+  
+}
+.issue-image{
+  width: 10vw;
+  border: 2px solid black;
+  margin: 2px;
+}
+li{
+  list-style-type: none;
+}
+.user-input{
+  width: 27vw;
+  height: 15vh;
+  background-color: rgb(255, 255, 255);
+  font-family: "comic-lettering-italic";
+  border: 3px solid black;
+  border-radius: 10px;
+  color: rgb(0, 0, 0);
+}
+.agent-reply{
+  background-color: rgb(255, 255, 255);
+  font-family: "comic-lettering-italic";
+  border: 3px solid black;
+  width: 27vw;
+  height: 20vh;
+  border-radius: 10px;
+  color: rgb(0, 0, 0);
+  overflow: auto;
+}
+#image-input{
+  background-color: rgba(240, 248, 255, 0);
+  display: none;
+
+}
+hr{
+  margin: 0;
+  padding: 0;
+}
