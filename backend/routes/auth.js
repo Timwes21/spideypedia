@@ -16,7 +16,7 @@ function authRouter(createUser, authorizeUser, authorizeUsername){
         res.status(401).json({message: "username already exists"});
     }
 
-
+// test
     router.post("/create-user", checkIfUserExists, async(req, res)=>{
         const data = req.body;
         console.log('in creation');
