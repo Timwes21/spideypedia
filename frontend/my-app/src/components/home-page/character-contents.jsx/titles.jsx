@@ -5,7 +5,7 @@ import AddIssue from "./add/add-issue.jsx";
 export default function Titles({ title, visible, type, character }){
 
     const [ issuesVisibility, setIssuesVisibility ] = useState({});
-
+    
 
     const toggleVisibility = (titleName) =>{
         setIssuesVisibility((prev)=>({

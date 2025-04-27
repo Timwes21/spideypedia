@@ -2,18 +2,16 @@ import express from 'express';
 
 
 
-function agentRouter(redisPub, Agent){
+function agentRouter(redisPub, Agent, collection){
     const router = express.Router()
     
     router.post("/convo", async(req, res)=>{
         const data = req.body;
         const { token, input } = data
-        console.log('here');
         try{
             const agent = new Agent();
-            const result = await agent.handleTask(token, input, redisPub);
+            const result = await agent.handleTask(token, input, collection);
             await redisPub.publish("charUpdates", data.token);
-            await redisPub.expire("chat:session:" + data.token, 3600);  
             res.status(200).json({message: result});
         }
         catch(err){

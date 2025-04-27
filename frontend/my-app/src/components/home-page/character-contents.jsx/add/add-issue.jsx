@@ -12,11 +12,14 @@ export default function AddIssue({titleName, type, character, vol}){
         if (issueNumber) {
         const formData = new FormData()
         formData.append('token', localStorage.getItem("comicManagementToken"));
-        formData.append('character', character);
-        formData.append('type', type);
-        formData.append('title', titleName);
-        formData.append('issue', issueNumber);
-        formData.append('vol', vol);
+        formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`);
+        formData.append('issueDetails', {
+            character: character,
+            type: type,
+            titleName: titleName,
+            vol: vol,
+            issueNumber: issueNumber
+        });
         formData.append("image", imageFile);
 
             fetch(addRouteApi, {
@@ -27,9 +30,19 @@ export default function AddIssue({titleName, type, character, vol}){
             .then(response=>response.json())
             .then(data=>{
                 setButtonPressed(!buttonPressed)
+                setIssueNumber("")
+                setPreview("")
             })
             .catch(err=>console.log(err))
         }
+    }
+
+    function cancel(){
+        setButtonPressed(!buttonPressed);
+        setImageFile("");
+        setPreview("");
+        setIssueNumber("");
+
     }
 
     
@@ -54,7 +67,7 @@ export default function AddIssue({titleName, type, character, vol}){
                     add();
                 }
             }>Add</button>
-            <button onClick={()=>setButtonPressed(false)}>Cancel</button>
+            <button onClick={cancel}>Cancel</button>
         </div>
     </div>
     )

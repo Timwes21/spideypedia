@@ -8,6 +8,7 @@ function withDecryptToken(handler){
 }
 
 function decryptToken(unparsedToken){
+    
     const token = JSON.parse(unparsedToken);
     const { iv, encrypted } = token;
     const rawToken = decrypt(iv, encrypted);

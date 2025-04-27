@@ -10,6 +10,13 @@ export default function AddTitle({ character }){
     
     
     console.log(type);
+
+    function clearForm(){
+        setButtonPressed(false);
+        setType("");
+        setName("");
+        setVol("")
+    }
     
     const addButton=()=>{
         (type && name && vol) && fetch(addTitleApi, {
@@ -23,8 +30,9 @@ export default function AddTitle({ character }){
                 vol: vol
             })
         })
-        .then(response=>response.json())
-        .then(data=>console.log(data))
+        .then(()=>{
+          clearForm();
+        })
         .catch(err=>console.log(err))
     }
 
@@ -45,7 +53,7 @@ export default function AddTitle({ character }){
             <div className="buttons-add-title">
 
             <button onClick={addButton}>Submit</button>
-            <button onClick={()=>setButtonPressed(!buttonPressed)}>Cancel</button>
+            <button onClick={clearForm}>Cancel</button>
             </div>
 
         </div>

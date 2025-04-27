@@ -18,7 +18,9 @@ export default function CharList({refresh}){
     
     
     function loadChars(){
+        // ws.current = new WebSocket("ws://spideypedia-production.up.railway.app")
         ws.current = new WebSocket("ws://localhost:3000")
+
         ws.current.onopen = () =>{
                 ws.current.send(JSON.stringify(token));
         }
@@ -50,7 +52,8 @@ export default function CharList({refresh}){
             {Object.entries(characters).map(([charName, charData]) => (
                 <>
                     <div key={charName}>
-                        <strong 
+                        <strong
+                        key={charName} 
                         className="char-name" 
                         onClick={()=>toggleVisibility(charName)}>
                             {charName}

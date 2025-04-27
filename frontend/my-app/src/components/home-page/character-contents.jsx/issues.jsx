@@ -1,11 +1,12 @@
 import { useState } from "react";
 import IssueDetails from "./issue-details.jsx";
+import { DeleteIssue } from "./add/delete-issue.jsx";
 
-export default function Issues({issues, visible}){
+export default function Issues({character, type, titleName, vol, issues, visible}){
     const [ issueDetailsVisibility, setIssueDetailsVisibility ] = useState({})
-    const [isKeyIssue, setKeyIssue ] = useState(false)
+    const [ isKeyIssue, setKeyIssue ] = useState(false)
 
-    function setKeyIssues(issueDetails, name, issueNumber){
+    function setKeyIssues( name, issueNumber){
         const normalIssue = (
                 <span className="char-header" onClick={()=>toggleVisibility(issueNumber)}>{issueNumber}: {name}</span>
         )
@@ -23,16 +24,15 @@ export default function Issues({issues, visible}){
         }))
     }
     
-    console.log("issues", issues);
     
     return visible?(
         <div className="issues">
             {Object.entries(issues).map(([issueNumber, issueDetails])=>(
                 <div key={issueNumber} className="issues">
-                    {setKeyIssues(issueDetails, issueDetails.name, issueNumber)}
-                     
-                    <IssueDetails issueDetails={issueDetails} visible={issueDetailsVisibility[issueNumber]}/>
-                    <hr />
+                    {setKeyIssues(issueDetails.issueRundown.Name, issueNumber)}
+                    <IssueDetails character={character} type={type} titleName={titleName} vol={vol} issueNumber={issueNumber} issueDetails={issueDetails} visible={issueDetailsVisibility[issueNumber]}/>
+                    <DeleteIssue character={character} type={type} titleName={titleName} vol={vol} issueNumber={issueNumber}/>
+                    <hr/>
                 </div>
             ))}
         </div>

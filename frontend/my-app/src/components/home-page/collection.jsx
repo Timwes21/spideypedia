@@ -5,14 +5,13 @@ import CharList from "./character-contents.jsx/char-list.jsx";
 
 
 export default function Collection({ refresh }){
-    
     const [ visible, setVisible ] = useState(false);
     
-    
+
     return(
         <div className="table" id="collection-table">
             <h1 className="table-header">Comics</h1>
-            <div className="table-contents">
+            <div className="table-contents" >
                 <div className="character-list">
                     <CharList refresh={refresh}/>
                 </div>

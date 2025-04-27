@@ -1,10 +1,10 @@
 import { WebSocketServer } from 'ws';
 
-async function ws(server, getCharacters, redisSub){
+async function ws(server, getCharacters, redisSub, collection){
     const wss = new WebSocketServer({ server });
     redisSub.subscribe("charUpdates", async(message)=>{
         const token = message;
-        const updatedChars = await getCharacters(token);
+        const updatedChars = await getCharacters(token, collection);
         
     wss.clients.forEach(client=>{
         if (client.readyState === client.OPEN && client.token === token){
@@ -18,7 +18,7 @@ async function ws(server, getCharacters, redisSub){
             try{
                 const token = JSON.parse(message);
                 ws.token = token;
-                const chars = await getCharacters(token);
+                const chars = await getCharacters(token, collection);
                 ws.send(JSON.stringify({message: chars}));
             }
             catch(err){
