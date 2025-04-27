@@ -1,5 +1,7 @@
 import { fileURLToPath } from 'url'
 import { getPhotoPath } from "../db/comics.js";
+import { getUsername } from '../db/users.js';
+import { productionCollection } from '../db/db.js';
 import fs from "fs";
 import path from 'path';
 import multer from 'multer';
@@ -8,6 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename); 
 
 function deleteFolder(partialPath, folder){
+    
     const fullPath = path.join(__dirname, partialPath, folder);
     fs.rm(fullPath, {recursive: true, force: true}, (err)=>{
         if (err){
@@ -46,10 +49,9 @@ const storage = multer.diskStorage({
 
 
 async function getPhoto(token, char, type, series, vol, issueNumber, collection){
-    const photoPath = await getPhotoPath(token, char, type, series, vol, issueNumber, collection);
-    const filePath = path.join(__dirname, photoDir, photoPath);
-    await fs.promises.access(filePath);
-    return filePath;
+        const photoPath = await getPhotoPath(token, char, type, series, vol, issueNumber, collection);
+        const filePath = path.join(__dirname, photoPath, photoPath);
+        await fs.promises.access(filePath);
 }
 
 function getDummyPhoto(){

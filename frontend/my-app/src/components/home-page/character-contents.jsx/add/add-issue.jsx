@@ -10,16 +10,16 @@ export default function AddIssue({titleName, type, character, vol}){
 
     function add(){
         if (issueNumber) {
-        const formData = new FormData()
+        const formData = new FormData();
         formData.append('token', localStorage.getItem("comicManagementToken"));
         formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`);
-        formData.append('issueDetails', {
+        formData.append('issueDetails', JSON.stringify({
             character: character,
             type: type,
             titleName: titleName,
             vol: vol,
             issueNumber: issueNumber
-        });
+        }));
         formData.append("image", imageFile);
 
             fetch(addRouteApi, {

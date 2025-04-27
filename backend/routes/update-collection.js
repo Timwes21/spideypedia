@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDummyPhoto, getPhoto } from '../images/image-file-handling.js';
+import { upload, getDummyPhoto, getPhoto } from '../images/image-file-handling.js';
 
 
 function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, redisPub, collection){
@@ -37,6 +37,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
     router.post("/add-issue", upload.single("image"), async(req, res)=>{
         const data = req.body;
         try{
+            const {token, issueDetails } = data;
             await AddIssue(token, issueDetails, collection)
             await redisPub.publish("charUpdates", data.token);
             res.status(200).json({message: "Issue Added"})
@@ -50,7 +51,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
     router.post("/delete-issue", async(req, res)=>{
         const data = req.body;
         try{
-            const { token, characterData, collection } = data;
+            const { token, characterData } = data;
             await deleteIssue(token, characterData, collection);
             await redisPub.publish("charUpdates", data.token);
             
@@ -65,8 +66,11 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
     router.post("/update-details", upload.single("image"), async(req, res)=>{
         const data = req.body;
         try{
+            console.log(data);
+            
             const {token, characterData, issueDetailList} = data
-            await updateDetails(token, characterData, issueDetailList, collection);
+
+            await updateDetails(token, JSON.parse(characterData), JSON.parse(issueDetailList), collection);
             await redisPub.publish("charUpdates", data.token);
             res.status(200).json({message: "Updated Details"})
         }

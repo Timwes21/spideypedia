@@ -20,7 +20,7 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 
 ws(server, getCharacters, redisSub, productionCollection);
 app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, productionCollection));
-app.use('/comics', collectionRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, getPhotoPath, redisPub, productionCollection));
+app.use('/comics', collectionRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, redisPub, productionCollection));
 app.use('/agent', agentRouter(redisPub, Agent, productionCollection));
 
 

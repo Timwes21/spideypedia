@@ -23,16 +23,16 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
         const formData = new FormData();
         formData.append('token', localStorage.getItem("comicManagementToken"));
         formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`)
-        formData.append('characterData', {
+        formData.append('characterData', JSON.stringify({
             character: character, 
             type: type, 
             titleName: 
             titleName, 
             vol: vol, 
             issueNumber: issueNumber
-        });
+        }));
         formData.append("image", imageFile);
-        formData.append("issueDetailList", {...combine})
+        formData.append("issueDetailList", JSON.stringify({...combine}))
         fetch(comicsBase + "/update-details", {
             method: "POST",
             body: formData

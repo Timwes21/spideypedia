@@ -1,24 +1,8 @@
 import { findOne, updateOne } from './db.js'
 import { withDecryptToken } from './token-handler.js';
 import { getKey } from '../agents/gemini/llm.js';
-import fs from "fs";
-import path from 'path';
-import { fileURLToPath } from 'url'
+import { deleteFolder } from '../images/image-file-handling.js';
 
-
-function deleteFolder(partialPath, folder){
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename); 
-    const fullPath = path.join(__dirname, "../images/" + partialPath, folder);
-    fs.rm(fullPath, {recursive: true, force: true}, (err)=>{
-        if (err){
-            console.log(err);
-            return;            
-        }
-        console.log("deleted");
-        
-    });
-}
 
 
 const issueTemplate = {
@@ -53,9 +37,13 @@ async function _addToCharacter(token, characterData, collection){
 
 
 async function _AddIssue(token, issueDetails, collection){
-    const {character, type, title, issue, vol} = issueDetails
-    const prompt = `short answer only, generate a filled out json object based off this template: ${JSON.stringify(issueTemplate)}, and the comic info: ${type} ${title}, vol ${vol}, number ${issue}`;
+    const {character, type, titleName, issueNumber, vol} = JSON.parse(issueDetails)
+    console.log(issueDetails);
+    
+    const prompt = `short answer only, generate a filled out json object based off this template: ${JSON.stringify(issueTemplate)}, and the comic info: ${type} ${titleName}, vol ${vol}, number ${issueNumber}`;
     const issueObject = await getKey(prompt);
+    console.log(issueObject);
+    
 
     Object.entries(issueObject.issueRundown).map(([key, value])=>{
         if (value === null || value ==="null") delete issueObject.issueRundown[key] 
@@ -63,7 +51,8 @@ async function _AddIssue(token, issueDetails, collection){
     
     
     
-    const key = `characters.${character}.${type}.${title}.${vol}.${issue}`;
+    const key = `characters.${character}.${type}.${titleName}.${vol}.${issueNumber}`;
+    console.log(key);
     
     await updateOne(
         collection,
@@ -84,7 +73,6 @@ async function _DeleteIssue(token,characterData, collection){
     const user = result[0];
     const username = user.userInfo.username;
     const chars = user.characters;
-    const partialPath = `../images/${username}/${character}/${type}/${titleName}/${vol}`
     
     delete chars[character][type][titleName][vol][issueNumber];
     deleteFolder(partialPath, issueNumber);
