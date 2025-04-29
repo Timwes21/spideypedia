@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AddChar from "./character-contents.jsx/add/add-char.jsx";
+import AddChar from "./character-contents.jsx/update-comic-list/add-char.jsx";
 import CharList from "./character-contents.jsx/char-list.jsx";
 
 

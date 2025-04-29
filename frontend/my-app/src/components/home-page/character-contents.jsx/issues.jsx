@@ -1,6 +1,6 @@
 import { useState } from "react";
 import IssueDetails from "./issue-details.jsx";
-import { DeleteIssue } from "./add/delete-issue.jsx";
+import { DeleteIssue } from "./update-comic-list/delete-issue.jsx";
 
 export default function Issues({character, type, titleName, vol, issues, visible}){
     const [ issueDetailsVisibility, setIssueDetailsVisibility ] = useState({})

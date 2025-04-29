@@ -1,6 +1,6 @@
 import { useState } from "react"
 import Volumes from "./volumes.jsx"
-import AddIssue from "./add/add-issue.jsx";
+import AddIssue from "./update-comic-list/add-issue.jsx";
 
 export default function Titles({ title, visible, type, character }){
 

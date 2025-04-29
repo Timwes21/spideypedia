@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Issues from './issues.jsx'
-import AddIssue from './add/add-issue.jsx'
+import AddIssue from './update-comic-list/add-issue.jsx'
 
 export default function Volumes({volumes, visible, titleName, type, character}){
     const [issuesVisibility, setIssuesVisibility] = useState({})

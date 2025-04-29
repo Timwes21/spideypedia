@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import CharContents from "./char-contents.jsx";
-import AddTitle from "./add/add-title.jsx";
+import AddTitle from "./update-comic-list/add-title.jsx";
 const token = localStorage.getItem("comicManagementToken")
 
 export default function CharList({refresh}){
@@ -18,8 +18,8 @@ export default function CharList({refresh}){
     
     
     function loadChars(){
-        ws.current = new WebSocket("ws://spideypedia-production.up.railway.app")
-        // ws.current = new WebSocket("ws://localhost:3000")
+        // ws.current = new WebSocket("ws://spideypedia-production.up.railway.app")
+        ws.current = new WebSocket("ws://localhost:3000")
 
         ws.current.onopen = () =>{
                 ws.current.send(JSON.stringify(token));
