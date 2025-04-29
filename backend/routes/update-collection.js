@@ -68,18 +68,16 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
         try{
             console.log(data);
             
-            const {token, characterData, issueDetailList} = data
+            const {token, characterData, issueDetailList} = data;
 
             await updateDetails(token, JSON.parse(characterData), JSON.parse(issueDetailList), collection);
             await redisPub.publish("charUpdates", data.token);
-            res.status(200).json({message: "Updated Details"})
+            res.status(200).json({message: "Updated Details"});
         }
         catch(err){
             console.log(err);
             
             res.status(500).json({message: "Something went wrong"})
-
-
         }
     })
 

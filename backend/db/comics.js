@@ -75,6 +75,7 @@ async function _DeleteIssue(token,characterData, collection){
     const chars = user.characters;
     
     delete chars[character][type][titleName][vol][issueNumber];
+    const partialPath = `${character}/${type}/${titleName}/${vol}`;
     deleteFolder(partialPath, issueNumber);
     
     

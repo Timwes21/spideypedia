@@ -1,88 +1,205 @@
-import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate } from "./templates.js";
+import { getResponse } from "./gemini/llm.js";
+import {  comicBookDbTemplate, decideConfig, issueRundownConfig, issueRundownTemplate, updateConfig } from "./templates.js";
 
 export const Actions = {
-    header: "",
-    task: "",
-    redisSub: "",
-    chatSession: "",
+    config: "",
+    token: "",
     input: "",
+    content: "",
     collection: "",
+    structuredResearch: "",
 
-    construct: function(redisPub, chatSession, input, collection){
-        this.redisPub = redisPub;
-        this.chatSession = chatSession;
+    construct: function(input, token, collection){
         this.input = input
+        this.token = token
         this.collection = collection
         return this;
     },
 
-    updateHistory: async function(agentReply){
-        await Promise.all([
-            this.redisPub.lPush(this.chatSession, "User: " + this.input),
-            this.redisPub.lPush(this.chatSession, "Agent: " + agentReply)
-        ]) 
-    },
 
-    add: async function(key){
-        if (key.beingAddedOrRemoved === "issue"){
-            try{
-                const update = key.updateAndOption.update;
-                const filter = key.updateAndOption.filer;
-                const result = await collection.updateOne(filter, update);  
-                this.header = `You added an issue to the users comic collection and here is the result: ${JSON.stringify(result)}`;
-                this.task = "generate a response based on the result and user input in no more than 25 words";
-                return this;
-            }
-            catch(error){
-                console.log(error);   
-                this.header = `You tried adding an issue to the users collection but it might not exist`;
-                this.task = "generate a response for the user in no more than 25 words";
-                return this;
-            }
+    addOutput: function(){
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
         }
-        const result = await this.collection.updateOne(key.updateAndOption.filter, key.updateAndOption.update);
-        this.header = `You added something to the users collection and here is the result ${result}`;
-        this.task = "generate a response for the user based on their input and result in no more than 25 words";
+        this.config = {
+            systemInstruction: `The user wants to add to their database which is built like ${JSON.stringify(comicBookDbTemplate)}, generate needed response`,
+            ...updateConfig
+        }
+        console.log("made it to addOutput");
+        
         return this;
     }, 
 
-    remove: async function(agentOutput){
-        const { filter, update } = agentOutput.updateAndOption
-        const result =  await this.collection.updateOne(filter, update);
-        this.header = `you are part of a comic management application. You provided a pipeline to aggregate the mongodb db and the results were: ${result}`;
-        this.task = "formulate ONLY a response for the user as this will be read by them, If the user asked about the data and results are empty or undefined provide a response indicating nothing was found.";
+    addIssue: async function (issueRundown){
+        const json = this.json;
+        try{
+            
+            console.log("issue rundown: ", issueRundown);
+            console.log('here');
+            console.log(json);
+            
+            const update = json.updateAndOption.update;
+            const filter = json.updateAndOption.filter;
+            const parsedUpdate = JSON.parse(update);
+            const parsedFilter = JSON.parse(filter)
+            console.log(parsedUpdate["$set"]);
+            
+            const key = parsedUpdate['$set'][Object.keys(parsedUpdate)[0]]
+            const result = await this.collection.updateOne(parsedFilter,{ $set: {[key]: issueRundown}});
+            this.config = {
+                systemInstruction: `The user added something and here is the result: ${JSON.stringify(result)}, generate a response to them`
+            }
+            return this;    
+        }
+        catch(err){
+            console.log(err);
+            this.config = {
+                systemInstruction: "The user attempted to add an issue to their comic collection but it went wrong, explain so it no less than 25 words."
+            }
+            return this;
+        }
+    },
+    googleSearch: function(){
+        this.config.tools = [{googleSearch: {}}]
+        console.log("made it to googleSearch");
+        return this;
+        
+    },
+    removeOutput: function(){
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
+        }
+        this.config = {
+            systemInstruction: `The user wants to remove something from their database which is built like ${JSON.stringify(comicBookDbTemplate)}, generate needed response`,
+            ...updateConfig
+        }
+        return this;
+ 
+    },
+
+    addIssueResearch: function(){
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
+        }
+        this.config = {
+            systemInstruction: `the user needs these fields filled out, ${JSON.stringify(issueRundownTemplate)}, do the necessary research based on the issue the user wants to add`,
+        }
+        return this;
+    },
+    structureResearch: function(research){
+        this.content = {
+            role: "user",
+            parts: [{ text: research }],
+        }
+        this.config = {
+            systemInstruction: `based on the issue research the user supplied, put everything in the structured output`,
+            ...issueRundownConfig
+        }
+        return this
+    },
+
+    add: async function(){
+        const json = this.json;
+        try{
+            const update = json.updateAndOption.update;
+            const filter = json.updateAndOption.filter;
+            const result = await this.collection.updateOne(filter, update);
+            this.config = {
+            systemInstruction: `The user added something and here is the result: ${JSON.stringify(result)}, generate a response to them`
+            }
+            return this;    
+        }
+        catch(err){
+            console.log(err);
+            this.config = {
+                systemInstruction: "The user attempted to add an issue to their comic collection but it went wrong, explain so it no less than 25 words."
+            }
+            return this;
+        }
+                    
+    },
+
+    remove: async function(){
+        const { filter, update } = this.json.updateAndOption;
+        try {
+            const result = await this.collection.updateOne(filter, update);
+            this.config = {
+                systemInstruction: `The user successfully removed something from their comic collection, ${JSON.stringify(result)} is the result`
+            }
+        }
+        catch(err){
+            console.error(err);
+            this.config = {
+                systemInstruction: "The user attempted to remove an issue to their comic collection but it went wrong, explain so it no less than 25 words."
+            }
+        }
         return this;
     },
     trivia: function(){
-        this.task = "answer the user in no more than 25 words";
-        this.header = "The user wants a general response";
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
+        }
+        this.config = {
+            systemInstruction: "The user is asking a trivia question, research and answer",
+        }
         return this;
     },
     unsure: function(){
-        this.task = "answer the user in no more than 25 words";
-        this.header = "The user sent something but its uncertain what they want, ask to verify what they need";
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
+        }
+        this.config = {
+            systemInstruction: "Tell the user it is uncertain what they are asking and they should ask again",
+        }
         return this;
     },
-    view: async function(agentOutput){
-        const aggregates = agentOutput.arrayOfAggregates
-        const result = await this.collection.aggregate(aggregates).toArray();
-        this.header = `You completed an operation to get feedback from the database based on the user input and here is the result: ${JSON.stringify(result)}`;
-        this.task = "Generate a response for the user to read";
+    view: async function(){
+        const json = this.json;
+        const aggregates = json.arrayOfAggregates
+        try{
+            const result = await this.collection.aggregate(aggregates).toArray();
+            this.config = {
+                systemInstruction: `The user asked about their comic collection and here are the result: ${JSON.stringify(result)}`,
+            }
+            return this;
+        }
+        catch(err){
+            console.error(err);
+            this.config = {
+                systemInstruction: `The user asked about their comic collection but something went wrong`,
+            }
+        }
         return this;
     },
-    analyzeInput: function(token){
-        this.header = `you will take the role of a comic book trivia expert, and be used inside a comic book management application, with a mongodb database. Return ONLY a json object`;
-        this.task = `${JSON.stringify(comicBookDbTemplate)} is the structure of the document and the template you will follow for generating filters, updates and array of aggregates, return a filled out version of eithere of these templates: ${JSON.stringify(aggregateTemplate)}; ${JSON.stringify(updateTemplate)}; ${JSON.stringify(triviaTemplate)}: ${JSON.stringify(unsureTemplate)}; so i can JSON.parse(yourReply) and use the aggregate or update option, add a match for the token: ${token}. if it deist apply then leave the field null, and if an issue is being added, fill out the correct info, also when adding always set {"$exists":false}, also the database i use to autofill the issue details only fills out the image, description and name feild, could ou get the accurate info for the artist, writer, editor, and name. keep the filter and update field inside updateAndOptions. Make sure it is in json format `;
+    analyzeInput: function(){
+        this.content = {
+            role: "user",
+            parts: [{ text: this.input }],
+        }
+        this.config = {
+            systemInstruction: "Determine the action the use wants to take based on their input",
+            ...decideConfig
+        }
+        console.log("made it to analyze input");
+        
         return this;
     },
     generatePromptGemini:async function() {
-        return{
-            role: "comic book trivia expert, and user comic book database manager",
-            header: this.header,
-            task: this.task,
-            userInput: this.input,
-            // history: await this.redisPub.lRange(this.chatSession, 0, -1)
-        }
+        return await getResponse(this.content, this.config);
+    },
+    generateJson: async function(){
+        const unparsedJson = await getResponse(this.content, this.config);
+        console.log("made it to generateJson");
+        
+        
+        this.json = JSON.parse(unparsedJson);
+        
+        return this
     }
     
 }    

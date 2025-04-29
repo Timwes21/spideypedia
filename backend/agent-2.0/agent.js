@@ -1,56 +1,92 @@
 import { decryptToken } from '../db/token-handler.js';
-import { getKey, getResponse} from './gemini/llm.js';
 import { Actions } from "./actions.js";
 import 'dotenv/config';
 // import { getJson, getResponse } from './groq/llm.js';
 
 
+/* 
+    Prototyping a more structured output 
+    Not in use because of model usage spike it causes
+*/
+
 
 class Agent{
     constructor(){
-        this.ActionHandler = {...Actions};
+        this.ActionBuilder = {...Actions};
     }
 
-    async analyzeInput(encryptedToken, input, redisPub, collection) {
+    async analyzeInput(encryptedToken, input, collection) {
         const token = decryptToken(encryptedToken);
 
-        const messages = await this.ActionHandler
-                            .construct(redisPub, chatSession, input, collection)
-                            .analyzeInput(token)
-                            .generatePromptGemini();
-        
-        const agentOutput = await getKey(messages);
-            
-        return agentOutput;
+        await this.ActionBuilder
+                    .construct(input, token, collection)
+                    .analyzeInput()
+                    .generateJson();
+
     }
 
 
 
-    async handleAction(agentOutput){
-        const action = agentOutput.action;
+    async handleAction(){
+        const action = this.ActionBuilder.json.action;
+        console.log(action);
         
+
         switch(action){
-            case "add":
-            case "check":
-            case "remove":
-                return await (await this.ActionHandler
-                                    [action](agentOutput))
-                                    .generatePromptGemini(); 
-            case "trivia":
-            case "unsure":
-                return await this.ActionHandler
-                                [action]()
-                                .generatePromptGemini();
+            case "addOther":
+                return await this.ActionBuilder
+                                .addOutput()
+                                .generateJson().then(ActionBuilder => ActionBuilder
+                                .add().then(ActionBuilder => ActionBuilder
+                                .generatePromptGemini()))
+
+            case "addIssue": {
+                const research = await this.ActionBuilder
+                                    .addIssueResearch()
+                                    .googleSearch()
+                                    .generatePromptGemini()
+
+                const structuredResearch = await this.ActionBuilder
+                                                    .structureResearch(research)
+                                                    .generateJson()
+
                 
+                
+                return await this.ActionBuilder
+                                .addOutput()
+                                .generateJson().then(ActionBuilder => ActionBuilder
+                                .addIssue(structuredResearch.json).then(ActionBuilder => ActionBuilder
+                                .generatePromptGemini()))
+
+                        
+                        
+            }
+            case "remove":
+            case "view":
+                return await this.ActionBuilder[action + "Output"]()
+                                .generateJson().then(ActionBuilder => ActionBuilder[action]()
+                                .then(ActionBuilder => ActionBuilder
+                                .generatePromptGemini()));
+                                
+
+            case "trivia":
+                return await this.ActionBuilder
+                                .trivia()
+                                .googleSearch()
+                                .generatePromptGemini();
+            
+            case "unsure":
+                return await this.ActionBuilder
+                        .unsure()
+                        .generatePromptGemini();
         }
     }
     
             
-    async handleTask(token, input, redisPub){
-        const inputAnalysis = await this.analyzeInput(token, input, redisPub);
-        const actionResults = await this.handleAction(inputAnalysis);
-        const agentReply = await getResponse(actionResults);
-        return agentReply;
+    async handleTask(token, input, collection){        
+        await this.analyzeInput(token, input, collection);
+        const actionResults = await this.handleAction();
+        return actionResults
     }
 }
 

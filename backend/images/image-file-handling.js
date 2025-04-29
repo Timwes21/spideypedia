@@ -50,10 +50,17 @@ const storage = multer.diskStorage({
 
 async function getPhoto(token, char, type, series, vol, issueNumber, collection){
         const photoPath = await getPhotoPath(token, char, type, series, vol, issueNumber, collection);
-        const filePath = path.join(__dirname, photoPath, photoPath);
-        await fs.promises.access(filePath);
-}
-
+        const filePath = path.join(__dirname, photoPath);
+        try{
+            await fs.promises.access(filePath);
+            return filePath;
+        }
+        catch(err){
+            console.log(err);
+            getDummyPhoto();
+        }
+    }
+    
 function getDummyPhoto(){
     const filePath = path.join(__dirname, "image.png");
     return filePath;
