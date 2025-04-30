@@ -17,11 +17,12 @@ export function DeleteIssue({character, type, titleName, vol, issueNumber}){
                     vol: vol, 
                     issueNumber: issueNumber
                 } 
-                })
+            })
         })
         .then(()=>{
             setConfirm(!confirm)
         })
+        .catch(err=>console.log(err))
     }
      return confirm? (
         <>
