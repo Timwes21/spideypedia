@@ -39,8 +39,9 @@ router.post("/login", async(req, res)=>{
     console.log('in login');
     
     try{
-        const args = Object.values(data)
-        const token = await authorizeUser(args, collection);
+        const args = Object.values(data);
+        console.log(args);
+        const token = await authorizeUser(...args, collection);
         console.log("token", token);
         
         res.status(200).json({message: "logged in", token: token})

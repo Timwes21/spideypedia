@@ -37,9 +37,9 @@ async function authorizeUsername(username, collection){
     return result.length===0;
 }
 
-async function authorizeUser(user, collection){
-    const { username, password } = user;
+async function authorizeUser(username, password, collection){
     const results = await findOne(
+        collection,
         {"userInfo.username": username},
         {"userInfo.password": 1}
     );
@@ -58,7 +58,7 @@ async function authorizeUser(user, collection){
     
 
     const token = getToken();
-    await updateOne({"userInfo.username": username},{token: token});
+    await updateOne(collection, {"userInfo.username": username},{token: token});
     return encrypt(token);
 }
 

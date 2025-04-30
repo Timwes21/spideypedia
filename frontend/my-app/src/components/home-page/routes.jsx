@@ -1,5 +1,5 @@
-// const base = "https://spideypedia-production.up.railway.app";
-const base = "http://localhost:3000"
+const base = "https://spideypedia-production.up.railway.app";
+
 const comicsBase = base + "/comics";
 const authBase = base + "/auth";
 const submitToAgentApi = base + "/agent/convo";
