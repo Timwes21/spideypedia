@@ -21,7 +21,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.options('*', cors());
 
 ws(server, getCharacters, redisSub, productionCollection);
 app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, productionCollection));
