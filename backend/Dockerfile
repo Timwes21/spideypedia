@@ -24,8 +24,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 # Use cache for npm install
-RUN --mount=type=cache,id=npm-cache,target=/root/.npm \
-    npm ci --omit=dev
+RUN npm ci --omit=dev
 
 # Run the application as a non-root user.
 USER node
