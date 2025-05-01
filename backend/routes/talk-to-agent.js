@@ -10,7 +10,7 @@ function agentRouter(redisPub, Agent, collection){
         const { token, input } = data
         try{
             const agent = new Agent();
-            const result = await agent.handleTask(token, input, collection);
+            const result = await agent.execute(token, input, collection);
             await redisPub.publish("charUpdates", data.token);
             res.status(200).json({message: result});
         }

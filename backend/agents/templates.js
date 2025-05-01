@@ -45,22 +45,41 @@ export const comicBookDbTemplate = {
 
 export const aggregateTemplate = {
     arrayOfAggregates: "example",
-    action: "view",
 }
+
+export const viewTemplate = {
+    action: "checkDatabase",
+    userInput: "Do i have Amazing Spider-man vol 1 issue 11?"
+
+}
+
 
 export const updateTemplate = {
     updateAndOption: {
         filter: "",
         update: ""
     },
-    action: "add || remove",
-    "beingAddedOrRemoved": "issue || title  || character",
-    "issue": {issueNumber: "", titleOfSeries: "", seriesStartYear: ""}
 }
+
+export const addTemplate = {
+    action: "add",
+    "beingAddedOrRemoved": "issue || title  || character",
+    "issue": {issueNumber: "", titleOfSeries: "", seriesStartYear: ""},
+    userInput: "Add Amazing Spider-man vol 1 issue 11?"
+
+}
+
+
+export const removeTemplate ={
+    action: "remove",
+    userInput: "Remove Amazing Spider-man vol 1 issue 11?"
+}
+
 
 export const triviaTemplate = {
     action: "trivia",
-    userQuestion: ""
+    userQuestion: "",
+    userInput: "When was Captain America created?"
 }
 
 export const unsureTemplate = {

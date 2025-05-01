@@ -1,6 +1,6 @@
 import { useState } from "react";
-const base = "http://localhost:3000";
-// const base = "https://spideypedia-production.up.railway.app";
+// const base = "http://localhost:3000";
+const base = "https://spideypedia-production.up.railway.app";
 const createUserApi = base + "/auth/create-user";
 const loginApi = base + "/auth/login";
 

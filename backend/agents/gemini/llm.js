@@ -2,9 +2,9 @@ import { GoogleGenAI } from "@google/genai";
 import 'dotenv/config'
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-export async function getResponse(content){
+export async function getResponse(content, model){
     const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: model,
         contents: JSON.stringify(content),
         config: {
             tools: [{googleSearch: {}}],
@@ -13,8 +13,8 @@ export async function getResponse(content){
     return response.text
 }
 
-export async function getKey(content){
-        const response = await getResponse(content);
+export async function getKey(content, model){
+        const response = await getResponse(content, model);
         const cleaningResponse = response.replace("json", "");
         const finalResponse = cleaningResponse.split("```")[1];
         return JSON.parse(finalResponse);

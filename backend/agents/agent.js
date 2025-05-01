@@ -8,18 +8,20 @@ import 'dotenv/config';
 
 class Agent{
     constructor(){
-        this.ActionHandler = {...Actions};
+        this.ActionBuilder = {...Actions};
     }
 
     async analyzeInput(encryptedToken, input, collection) {
         const token = decryptToken(encryptedToken);
-
-        const messages = await this.ActionHandler
-                            .construct(input, collection)
-                            .analyzeInput(token)
+        console.log("analyzing input");
+        const prompt = this.ActionBuilder
+                            .construct(input, collection, token)
+                            .analyzeInput()
                             .generatePromptGemini();
+    
+        // console.log(prompt);
         
-        const agentOutput = await getKey(messages);
+        const agentOutput = await getKey(prompt, this.model);
             
         return agentOutput;
     }
@@ -27,30 +29,57 @@ class Agent{
 
 
     async handleAction(agentOutput){
+        console.log("handling output");
+        
         const action = agentOutput.action;
         
         switch(action){
             case "add":
-            case "check":
-            case "remove":
-                return await (await this.ActionHandler
-                                    [action](agentOutput))
-                                    .generatePromptGemini(); 
+            case "checkDatabase":
+            case "remove": {
+                
+                const prompt = this.ActionBuilder[action + "Prompt"]()
+                                    .generatePromptGemini();
+
+                const agentOutput = await getKey(prompt, this.model);
+
+                return this.ActionBuilder
+                                [action](agentOutput)
+                                .then(ActionBuilder=>ActionBuilder
+                                .generatePromptGemini()); 
+                }
             case "trivia":
             case "unsure":
-                return await this.ActionHandler
+                return await this.ActionBuilder
                                 [action]()
                                 .generatePromptGemini();
                 
         }
     }
+
     
             
-    async handleTask(token, input, collection){
+    async handleTask(token, input, collection, model){
+        this.model = model;
         const inputAnalysis = await this.analyzeInput(token, input, collection);
         const actionResults = await this.handleAction(inputAnalysis);
-        const agentReply = await getResponse(actionResults);
+        console.log(actionResults);
+        
+        const agentReply = await getResponse(actionResults, model);
         return agentReply;
+    }
+    
+    async execute(token, input, collection){
+        try{   
+            return await this.handleTask(token, input, collection, "gemini-2.0-flash");
+        }
+        catch(err){
+            console.log(err);
+            return await this.handleTask(token, input, collection, "gemini-2.0-flash");            
+        }
+        // finally{
+        //     return "Something went wrong try again later"
+        // }
     }
 }
 
