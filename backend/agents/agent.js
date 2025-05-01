@@ -1,5 +1,5 @@
 import { decryptToken } from '../db/token-handler.js';
-import { getKey, stream} from './gemini/llm.js';
+import { getKey, getResponse} from './gemini/llm.js';
 import { Actions } from "./actions.js";
 import 'dotenv/config';
 // import { getJson, getResponse } from './groq/llm.js';
@@ -19,7 +19,6 @@ class Agent{
                             .analyzeInput()
                             .generatePromptGemini();
     
-        // console.log(prompt);
         
         const agentOutput = await getKey(prompt);
             
@@ -63,8 +62,8 @@ class Agent{
         const inputAnalysis = await this.analyzeInput(token, input, collection);
         const actionResults = await this.handleAction(inputAnalysis);
         console.log(actionResults);
+        const agentReply = await getResponse(actionResults);
         
-        const agentReply = await stream(actionResults);
         return agentReply;
     }
     
