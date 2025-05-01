@@ -24,10 +24,12 @@ export default function AddTitle({ character }){
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 token: localStorage.getItem("comicManagementToken"), 
-                character: character, 
-                type: type, 
-                name: name, 
-                vol: vol
+                characterData:{    
+                    character, 
+                    type: type, 
+                    name: name, 
+                    vol: vol
+                } 
             })
         })
         .then(()=>{
