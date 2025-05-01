@@ -1,5 +1,5 @@
 import { decryptToken } from '../db/token-handler.js';
-import { getKey, getResponse} from './gemini/llm.js';
+import { getKey, stream} from './gemini/llm.js';
 import { Actions } from "./actions.js";
 import 'dotenv/config';
 // import { getJson, getResponse } from './groq/llm.js';
@@ -21,7 +21,7 @@ class Agent{
     
         // console.log(prompt);
         
-        const agentOutput = await getKey(prompt, this.model);
+        const agentOutput = await getKey(prompt);
             
         return agentOutput;
     }
@@ -59,27 +59,23 @@ class Agent{
 
     
             
-    async handleTask(token, input, collection, model){
-        this.model = model;
+    async handleTask(token, input, collection){
         const inputAnalysis = await this.analyzeInput(token, input, collection);
         const actionResults = await this.handleAction(inputAnalysis);
         console.log(actionResults);
         
-        const agentReply = await getResponse(actionResults, model);
+        const agentReply = await stream(actionResults);
         return agentReply;
     }
     
     async execute(token, input, collection){
         try{   
-            return await this.handleTask(token, input, collection, "gemini-2.0-flash");
+            return await this.handleTask(token, input, collection);
         }
         catch(err){
             console.log(err);
-            return await this.handleTask(token, input, collection, "gemini-2.0-flash");            
+            return await this.handleTask(token, input, collection);            
         }
-        // finally{
-        //     return "Something went wrong try again later"
-        // }
     }
 }
 
