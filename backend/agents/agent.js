@@ -28,13 +28,16 @@ class Agent{
 
 
     async handleAction(agentOutput){
-        console.log("handling output");
         
         const action = agentOutput.action;
+        console.log(action + "Prompt");
+        console.log('addManyIssuesPrompt');
+        
         
         switch(action){
             case "add":
             case "checkDatabase":
+            case "addManyIssues":
             case "remove": {
                 
                 const prompt = this.ActionBuilder[action + "Prompt"]()

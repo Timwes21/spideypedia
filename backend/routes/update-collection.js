@@ -2,7 +2,7 @@ import express from 'express';
 import { upload, getDummyPhoto, getPhoto } from '../images/image-file-handling.js';
 
 
-function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, redisPub, collection){
+function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, publish, collection){
 
     const router = express.Router()
     router.post("/add-character", async(req, res)=>{
@@ -10,7 +10,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
         try{
             const args = Object.values(data);
             await addCharacter(...args, collection);
-            await redisPub.publish("charUpdates", data.token);
+            await publish(data.token)
             res.status(200).json({message: "Character Added"});
         }
         catch(err){
@@ -24,7 +24,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
         try{
             const {token, characterData } = data;
             await addToCharacter(token, characterData, collection);
-            await redisPub.publish("charUpdates", data.token);
+            await publish(data.token)
             res.status(200).json({message: "Character Updated"});
         }
         catch(err){
@@ -39,7 +39,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
         try{
             const {token, issueDetails } = data;
             await AddIssue(token, issueDetails, collection)
-            await redisPub.publish("charUpdates", data.token);
+            await publish(data.token);
             res.status(200).json({message: "Issue Added"})
         }
         catch(err){
@@ -53,7 +53,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
         try{
             const { token, characterData } = data;
             await deleteIssue(token, characterData, collection);
-            await redisPub.publish("charUpdates", data.token);
+            await publish(data.token);
             
             res.status(200).json({message: "Issue Added"})
         }
@@ -71,7 +71,7 @@ function comicsRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updat
             const {token, characterData, issueDetailList} = data;
 
             await updateDetails(token, JSON.parse(characterData), JSON.parse(issueDetailList), collection);
-            await redisPub.publish("charUpdates", data.token);
+            await publish(data.token);
             res.status(200).json({message: "Updated Details"});
         }
         catch(err){

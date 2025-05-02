@@ -1,5 +1,20 @@
-import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate, viewTemplate, addTemplate, removeTemplate } from "./templates.js";
+import { getKey } from "./gemini/llm.js";
+import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate, viewTemplate, addTemplate, removeTemplate, issueRundownTemplate, addManyIssuePromptTemplate, addManyIssueTemplate } from "./templates.js";
 
+function capitalizeFirstLetterOnly(string){
+    function capitalizeFirstLetter(string2){
+        const firstLetter = string2.toLowerCase().charAt(0).toUpperCase()
+        const lowerCaseBody = string2.slice(1).toLowerCase();
+        return firstLetter + lowerCaseBody
+
+    }
+    const wordSplitBySpace = string.split(" ");
+    const newWords = []
+    for (const word of wordSplitBySpace){
+        newWords.push(capitalizeFirstLetter(word));
+    }
+    return newWords.join(" ");
+}
 
 export const Actions = {
     header: "",
@@ -14,16 +29,43 @@ export const Actions = {
         this.token = token
         return this;
     },
+    addManyIssuesPrompt: function(){
+        this.header = "The user wants to add multiple issues to their comic collection being handled in a mongodb database, the structure of the database looks like this: " + JSON.stringify(comicBookDbTemplate);
+        this.task = `Fill out this template based n the users input: ${JSON.stringify(addManyIssuePromptTemplate)}`;
+        return this;
+    },
+    addManyIssues:async  function(key){
+        console.log(key);        
+        let results = []
+        const issues = key.issuesNumbers;
+        const {titleName, vol, character, type} = key.issueDetails; 
+        const setVol =vol.includes("vol")?vol:"vol " + vol
+        const newTitleName = capitalizeFirstLetterOnly(titleName);
+        console.log(newTitleName);
+        
+        const newCharacter = capitalizeFirstLetterOnly(character)
+        for (const issue of issues){
+            const prompt = `return a filled out version of ${JSON.stringify(issueRundownTemplate)} based on the ${type} ${titleName}, vol ${vol}, issue ${issue}, and don't inlcude a field if it will be null`
+            const output = await getKey(prompt);
+            const filter = {token: this.token}
+            const update = {$set: {[`characters.${newCharacter}.${type}.${newTitleName}.${setVol}.${issue}.issueRundown`]: output}}
+            const result = await this.collection.updateOne(filter, update);
+            results.push(result)
+        }
+        this.header = `You added many issues to the users collection and here is the result ${JSON.stringify(results)}`;
+        this.task = "generate a response for the user based on their input and result in no more than 25 words";
+        return this;
 
+    },
     addPrompt: function (){
         this.header = "The user wants to add to their comic collection being handled in a mongodb database, the structure of the database looks like this: " + JSON.stringify(comicBookDbTemplate);
-        this.task = `fill out this template so i can JSON.parse() it : ${JSON.stringify(updateTemplate)} with the user token: ${this.token}` 
+        this.task = `fill out this template so i can JSON.parse() it : ${JSON.stringify(updateTemplate)} with the user token: ${this.token}. Do not include fields that will remain null` 
         return this;
     },
     add: async function(key){
         console.dir(key, {depth:null});
         
-        if (key.beingAddedOrRemoved === "issue"){
+        if (key.beingAdded === "issue"){
             try{
                 const update = key.updateAndOption.update;
                 const filter = key.updateAndOption.filter;
@@ -52,9 +94,6 @@ export const Actions = {
 
     remove: async function(agentOutput){
         const { filter, update } = agentOutput.updateAndOption;
-        // const key  = Object.keys(update['$unset'])[0];
-        // const field = update['$unset'][key];
-        console.log(update);
         
         const result =  await this.collection.updateOne(filter, update);
         this.header = `you are part of a comic management application. You provided a pipeline to aggregate the mongodb db and the results were: ${result}`;
@@ -89,7 +128,7 @@ export const Actions = {
     },
     analyzeInput: function(){
         this.header = `you will take the role of a comic book trivia expert, and be used inside a comic book management application, with a mongodb database. Return ONLY a json object`;
-        this.task = `return one of these templates based in the users input, in json form so i can JSON.parse() them: ${JSON.stringify(addTemplate)}; ${JSON.stringify(removeTemplate)}; ${JSON.stringify(triviaTemplate)}; ${JSON.stringify(viewTemplate)}; ${JSON.stringify(unsureTemplate)}`;
+        this.task = `return one of these templates based in the users input, in json form so i can JSON.parse() them: ${JSON.stringify(addTemplate)}; ${JSON.stringify(removeTemplate)}; ${JSON.stringify(triviaTemplate)}; ${JSON.stringify(viewTemplate)}; ${JSON.stringify(unsureTemplate)}, ${JSON.stringify(addManyIssueTemplate)}`;
         return this;
     },
     generatePromptGemini: function() {

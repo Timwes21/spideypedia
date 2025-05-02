@@ -7,6 +7,7 @@ export default function Agent(){
     const [ agentReply, setAgentReply ] = useState("");
 
     function submit(){
+        setAgentReply("Loading...")
         input && fetch(submitToAgentApi, {
             method: "POST",
             headers: {"Content-Type": "application/json"},

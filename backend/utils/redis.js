@@ -6,4 +6,8 @@ const redisPub = createClient({ url: process.env.REDIS_URL})
 redisSub.connect();
 redisPub.connect();
 
-export { redisSub, redisPub };
+async function publish(token){
+    await redisPub.publish("charUpdates", token);
+}
+
+export { redisSub, publish };
