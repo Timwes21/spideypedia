@@ -45,7 +45,7 @@ export const Actions = {
         return this;
     }, 
     removePrompt: function (){
-        this.header = "The user wants to remove something from their comic collection being stored in a mongodb database"
+        this.header = "The user wants to remove from their comic collection being handled in a mongodb database, the structure of the database looks like this: " + JSON.stringify(comicBookDbTemplate);
         this.task = `fill out this template so i can JSON.parse() it : ${JSON.stringify(updateTemplate)} with the user token: ${this.token}`
         return this;
     },
@@ -54,6 +54,8 @@ export const Actions = {
         const { filter, update } = agentOutput.updateAndOption;
         // const key  = Object.keys(update['$unset'])[0];
         // const field = update['$unset'][key];
+        console.log(update);
+        
         const result =  await this.collection.updateOne(filter, update);
         this.header = `you are part of a comic management application. You provided a pipeline to aggregate the mongodb db and the results were: ${result}`;
         this.task = "formulate ONLY a response for the user as this will be read by them, If the user asked about the data and results are empty or undefined provide a response indicating nothing was found.";
