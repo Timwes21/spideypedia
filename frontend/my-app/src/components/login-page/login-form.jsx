@@ -1,8 +1,7 @@
 import { useState } from "react";
-// const base = "http://localhost:3000";
-const base = "https://spideypedia-production.up.railway.app";
-const createUserApi = base + "/auth/create-user";
-const loginApi = base + "/auth/login";
+import { authBase } from "../../routes";
+const createUserApi = authBase + "/create-user";
+const loginApi = authBase + "/login";
 
 export default function LoginForm(){
     const [ username, setUsername ] = useState("");

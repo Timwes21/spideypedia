@@ -1,3 +1,4 @@
+import { publish } from "../utils/redis.js";
 import { getKey } from "./gemini/llm.js";
 import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate, viewTemplate, addTemplate, removeTemplate, issueRundownTemplate, addManyIssuePromptTemplate, addManyIssueTemplate } from "./templates.js";
 
@@ -45,12 +46,16 @@ export const Actions = {
         
         const newCharacter = capitalizeFirstLetterOnly(character)
         for (const issue of issues){
-            const prompt = `return a filled out version of ${JSON.stringify(issueRundownTemplate)} based on the ${type} ${titleName}, vol ${vol}, issue ${issue}, and don't inlcude a field if it will be null`
+            const prompt = `return a filled out version of ${JSON.stringify(issueRundownTemplate)} based on the ${type} ${titleName}, vol ${vol}, issue ${issue}, and don't include if it will be null`
             const output = await getKey(prompt);
+            for (const [key, value] of Object.entries(output)){
+                value ?? delete output[key];
+            }
             const filter = {token: this.token}
             const update = {$set: {[`characters.${newCharacter}.${type}.${newTitleName}.${setVol}.${issue}.issueRundown`]: output}}
             const result = await this.collection.updateOne(filter, update);
-            results.push(result)
+            await publish(this.token);
+            results.push(result);
         }
         this.header = `You added many issues to the users collection and here is the result ${JSON.stringify(results)}`;
         this.task = "generate a response for the user based on their input and result in no more than 25 words";
@@ -72,6 +77,7 @@ export const Actions = {
                 const result = await this.collection.updateOne(filter, update);  
                 this.header = `You added an issue to the users comic collection and here is the result: ${JSON.stringify(result)}`;
                 this.task = "generate a response based on the result and user input in no more than 25 words";
+                await publish(this.token);
                 return this;
             }
             catch(error){
@@ -84,6 +90,7 @@ export const Actions = {
         const result = await this.collection.updateOne(key.updateAndOption.filter, key.updateAndOption.update);
         this.header = `You added something to the users collection and here is the result ${JSON.stringify(result)}`;
         this.task = "generate a response for the user based on their input and result in no more than 25 words";
+        await publish(this.token);
         return this;
     }, 
     removePrompt: function (){
@@ -98,6 +105,7 @@ export const Actions = {
         const result =  await this.collection.updateOne(filter, update);
         this.header = `you are part of a comic management application. You provided a pipeline to aggregate the mongodb db and the results were: ${result}`;
         this.task = "formulate ONLY a response for the user as this will be read by them, If the user asked about the data and results are empty or undefined provide a response indicating nothing was found.";
+        await publish(this.token);
         return this;
     },
     trivia: function(){

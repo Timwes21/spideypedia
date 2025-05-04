@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { comicsBase } from "../../routes.jsx"
+import { comicsBase } from "../../../../routes.jsx"
 export function DeleteIssue({character, type, titleName, vol, issueNumber}){
     const [confirm, setConfirm] = useState(false)
 
-    function deleteIssue(){
+    const deleteIssue =() => {
         console.log("char: delete", character);
         
         fetch(comicsBase + "/delete-issue", {
@@ -24,12 +24,14 @@ export function DeleteIssue({character, type, titleName, vol, issueNumber}){
         })
         .catch(err=>console.log(err))
     }
-     return confirm? (
-        <>
+
+    const deleteButton = <button onClick={()=>setConfirm(!confirm)} className="delete-issue-button">Delete</button>
+    
+    const confirmButtons = 
+        (<>
             <button className="delete-issue-button" onClick={deleteIssue}>yes</button>
             <button className="delete-issue-button" onClick={()=>setConfirm(!confirm)}>no</button>
-        </>
-    ): (
-        <button onClick={()=>setConfirm(!confirm)} className="delete-issue-button">Delete</button>
-    )
+        </>)
+     
+    return confirm? confirmButtons: deleteButton
 }

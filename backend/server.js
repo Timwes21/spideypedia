@@ -6,7 +6,7 @@ import agentRouter from './routes/talk-to-agent.js';
 import collectionRouter from './routes/update-collection.js';
 import { createUser, authorizeUsername, authorizeUser} from './db/users.js';
 import {productionCollection } from './db/db.js'
-import { addToCharacter, addCharacter, getCharacters, AddIssue, deleteIssue, updateDetails, getPhotoPath} from './db/comics.js';
+import { updateCollectionRouteHandler, getCharacters} from './db/comics.js';
 import Agent from './agents/agent.js';
 import ws from './routes/websocket.js';
 import 'dotenv/config';
@@ -25,8 +25,8 @@ app.use(cors({
 
 ws(server, getCharacters, redisSub, productionCollection);
 app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, productionCollection));
-app.use('/comics', collectionRouter(addToCharacter, addCharacter, AddIssue, deleteIssue, updateDetails, publish, productionCollection));
-app.use('/agent', agentRouter(publish, Agent, productionCollection));
+app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, productionCollection));
+app.use('/agent', agentRouter(Agent, productionCollection));
 
 
 server.listen(3000, () => console.log("Comic Log Server running on port 3000"));

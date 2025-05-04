@@ -1,28 +1,30 @@
 import { useState } from "react";
-import { comicsBase } from "../routes.jsx";
+import { comicsBase } from "../../../routes.jsx";
 
 
 export default function IssueDetails({character, type, titleName, vol, issueNumber, issueDetails, visible}){
-    const token = localStorage.getItem("comicManagementToken");
 
     const [edit, setEdit] = useState(false);
     const [issueDetailList, setIssueDetailList ] = useState({
         ...issueDetails.issueRundown
-    })
-    const [ issueDetailsKeys, setIssueDetailsKeys ] = useState(Object.keys(issueDetailList))
-    const [ issueDetailsValues, setIssueDetailsValues ] = useState(Object.values(issueDetailList))
-    const [ imageFile, setImageFile ] = useState()
-    const [ image, setImage ] = useState(comicsBase + `/images/${token}/${character}/${type}/${titleName}/${vol}/${issueNumber}`)
+    });
+    const [ issueDetailsKeys, setIssueDetailsKeys ] = useState(Object.keys(issueDetailList));
+    const [ issueDetailsValues, setIssueDetailsValues ] = useState(Object.values(issueDetailList));
+    const [ imageFile, setImageFile ] = useState();
+    const [ image, setImage ] = useState(()=>{
+            return issueDetails.image?.url || null
+
+    });
 
     
     const save = () => {
         const issueDetailsKeysCopy = [...issueDetailsKeys]
         const combine = Object.fromEntries((issueDetailsKeysCopy).map((key, index)=>[key, issueDetailsValues[index]]))
         setEdit(!edit);
-        setIssueDetailList({...combine})
+        setIssueDetailList({...combine});
         const formData = new FormData();
         formData.append('token', localStorage.getItem("comicManagementToken"));
-        formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`)
+        formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`);
         formData.append('characterData', JSON.stringify({
             character: character, 
             type: type, 
@@ -32,11 +34,11 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
             issueNumber: issueNumber
         }));
         formData.append("image", imageFile);
-        formData.append("issueDetailList", JSON.stringify({...combine}))
+        formData.append("issueDetailList", JSON.stringify({...combine}));
         fetch(comicsBase + "/update-details", {
             method: "POST",
             body: formData
-            })
+            });
         
         
     }
@@ -100,29 +102,32 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
             return (<span key={label}><strong>{label}: </strong>{detail}</span>)})
     }
     
-    
-    
-    
-    
-    
     function renderImage(){
+        return image && <img src={image} className="issue-image" alt="comic-cover"/>;
+    }
+    
+    
+    
+    
+    function renderEditImage(){
+        const addPhotoText = image?"Add New Photo":"Add Photo";
         if (edit){
             return (<>
-                <img src={image} className="issue-image" alt="comic-cover" />
-                <label id="add-image-label" className="make-smaller" htmlFor="image-input-details">Add New Photo</label>
+                <label id="add-image-label" className="make-smaller" htmlFor="image-input-details">{addPhotoText}</label>
                 <input id="image-input-details" type="file" accept="image/*" onChange={(e)=>{
                     setImageFile(e.target.files[0]);
                     console.log(imageFile);
                     setImage(URL.createObjectURL(e.target.files[0]));}}/>
                 </>)
         }
-        return (<img src={image} className="issue-image" alt="comic-cover" />)
+        return (<></>)
     }
     
     function renderIssueDetails(){
         return (<div className="issue-details">
                     <div className="issue-image-container">
                         {renderImage()}
+                        {renderEditImage()}
                     </div>
                     <div className="issue-rundown">
                         {renderDetails()}

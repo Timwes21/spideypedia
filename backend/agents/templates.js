@@ -18,7 +18,10 @@ export const comicBookDbTemplate = {
                                 Crossovers : "",
                                 'Publication Date': "May 1963 for example",
                             },
-                            image: null,
+                            image: {
+                                url: null,
+                                pubicID: null
+                            },
                         },
                     "vol 2": {
                         15: {
@@ -33,7 +36,10 @@ export const comicBookDbTemplate = {
                                 Crossovers : "",
                                 'Publication Date': "May 1963 for example",
                             },
-                            image: null,
+                            image: {
+                                url: null,
+                                pubicID: null
+                            },
                         }
                     }
                     

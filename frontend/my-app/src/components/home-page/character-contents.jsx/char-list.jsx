@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react"
 import CharContents from "./char-contents.jsx";
 import AddTitle from "./update-comic-list/add-title.jsx";
+import { DeleteChar } from "./update-comic-list/delete-char.jsx";
+import { wsLink } from "../../../routes.jsx";
 const token = localStorage.getItem("comicManagementToken")
 
 export default function CharList({refresh}){
@@ -18,9 +20,7 @@ export default function CharList({refresh}){
     
     
     function loadChars(){
-        // ws.current = new WebSocket("wss://spideypedia-production.up.railway.app")
-        ws.current = new WebSocket("ws://localhost:3000")
-
+        ws.current = new WebSocket(wsLink)
         ws.current.onopen = () =>{
                 ws.current.send(JSON.stringify(token));
         }
@@ -59,6 +59,7 @@ export default function CharList({refresh}){
                             {charName}
                         </strong> 
                         <AddTitle visible={addTitleVisibility[charName]} character={charName}/>
+                        <DeleteChar character={charName}/>
                         <CharContents charData={charData} visible={characterVisibility[charName]} character={charName}/>
                     </div>
                 <hr />

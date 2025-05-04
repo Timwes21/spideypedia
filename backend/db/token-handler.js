@@ -1,10 +1,12 @@
 import { decrypt } from '../utils/encryption.js';
 
-function withDecryptToken(handler){
-    return async function(token, ...args){
-        const rawToken = decryptToken(token);
-        return await handler(rawToken, ...args);
-    }
+function withDecryptToken(req, res, next){
+    console.log(req);
+    
+    const unparsedToken = req.body.token; 
+    const token = decryptToken(unparsedToken);
+    req.body.token = token;
+    next();
 }
 
 function decryptToken(unparsedToken){

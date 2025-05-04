@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { comicsBase } from "../../routes";
+import { comicsBase } from "../../../../routes";
 const addCharacterApi = comicsBase + "/add-character"
 
 export default function AddChar(){

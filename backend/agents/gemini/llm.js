@@ -14,7 +14,7 @@ export async function getResponse(content){
 }
 
 export async function getKey(content){
-        const response = await getResponse(content);
+        const response = await getResponse(content, "and ensure its in json form so i can parse it");
         const cleaningResponse = response.replace("json", "");
         const finalResponse = cleaningResponse.split("```")[1];
         return JSON.parse(finalResponse);

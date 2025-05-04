@@ -2,7 +2,7 @@ import express from 'express';
 
 
 
-function agentRouter(publish, Agent, collection){
+function agentRouter(Agent, collection){
     const router = express.Router()
     
     router.post("/convo", async(req, res)=>{
@@ -11,7 +11,6 @@ function agentRouter(publish, Agent, collection){
         try{
             const agent = new Agent();
             const result = await agent.execute(token, input, collection);
-            await publish(token);
             res.status(200).json({message: result});
         }
         catch(err){
