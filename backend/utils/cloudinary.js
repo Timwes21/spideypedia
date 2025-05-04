@@ -12,19 +12,25 @@ cloudinary.config({
 
 
 export async function uploadImageToCloudinary(path){
-    try{
-        const result = await cloudinary.uploader
-        .upload(path, {
-            resource_type: "image", 
-            public_id: path,
-            overwrite: true
-        })
-        console.log(result);   
-        return {url: result.url, publicID: result.public_id};
-    }
-    catch{
-        return null;
-    }
+    return new Promise((resolve, reject)=>{
+
+        const stream = cloudinary.uploader
+        .upload_stream(
+            {folder: "spideypedia"},
+            (error, result)=>{
+                if (error){
+                    console.log(error);        
+                    return reject(null);
+                }
+                resolve({
+                    url: result.url,
+                    publicID: result.public_id
+                })          
+            }
+            
+        )
+        stream.end(path)
+    })
 }
 
 export function deleteImage(publicID){

@@ -24,7 +24,6 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
         setIssueDetailList({...combine});
         const formData = new FormData();
         formData.append('token', localStorage.getItem("comicManagementToken"));
-        formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`);
         formData.append('characterData', JSON.stringify({
             character: character, 
             type: type, 
@@ -103,6 +102,8 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
     }
     
     function renderImage(){
+        console.log(image);
+        
         return image && <img src={image} className="issue-image" alt="comic-cover"/>;
     }
     

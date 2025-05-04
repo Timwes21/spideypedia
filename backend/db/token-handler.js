@@ -1,7 +1,7 @@
 import { decrypt } from '../utils/encryption.js';
 
 function withDecryptToken(req, res, next){
-    console.log(req);
+    console.log("body there: ", req.body);
     
     const unparsedToken = req.body.token; 
     const token = decryptToken(unparsedToken);

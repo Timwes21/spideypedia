@@ -53,12 +53,16 @@ async function addIssue(data, collection){
         if (value === null || value ==="null") delete issueObject.issueRundown[key]; 
     });
     
-    if (path !== undefined){
-        const url = await uploadImageToCloudinary(path.replace(/\\/g, "/"));
-        fs.promises.unlink(path);
-        issueObject.image = url;
+    if (path){
+        try{
+            const result = await uploadImageToCloudinary(path);
+            issueObject.image = result;
+        }
+        catch(err){
+            issueObject.image = err;
+        }
     }
-    
+        
     
     const key = `characters.${character}.${type}.${titleName}.${vol}.${issueNumber}`;
     
@@ -80,7 +84,6 @@ async function deleteIssue(data, collection){
     })
     const result = await collection.aggregate(pipeline).toArray();
     const user = result[0];
-    const username = user.userInfo.username;
     const chars = user.characters;
     const image = chars[character][type][titleName][vol][issueNumber].image;
     if (image){
@@ -116,9 +119,9 @@ async function getCharacters(token, collection){
     return results?.characters || {};
 }
 
-async function updateDetails(data, collection) {
-    let { token, characterData, issueDetails, path } = data;
-    issueDetails = JSON.parse(issueDetails);
+async function updateDetails(data, collection) {    
+    const { token, characterData, issueDetailList, path } = data;
+    const issueDetails = JSON.parse(issueDetailList);
     const { character, type, titleName, vol, issueNumber } = JSON.parse(characterData);
     const pipeline = [];
     pipeline.push({
@@ -133,13 +136,19 @@ async function updateDetails(data, collection) {
     
     
     if (path){
+        console.log('here');
+        
         const imageData = chars[character][type][titleName][vol][issueNumber]?.image || null
         if (imageData){
             deleteImage(imageData.publicID);
         }
-        const url = await uploadImageToCloudinary(path.replace(/\\/g, "/"));
-        fs.promises.unlink(path);
-        chars[character][type][titleName][vol][issueNumber].image = url;
+        try{
+            const result = await uploadImageToCloudinary(path);
+            chars[character][type][titleName][vol][issueNumber].image = result
+        }
+        catch(err){
+            chars[character][type][titleName][vol][issueNumber].image = err
+        }
     }
     chars[character][type][titleName][vol][issueNumber].issueRundown = issueDetails;
     
