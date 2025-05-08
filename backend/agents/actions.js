@@ -50,7 +50,7 @@ export const Actions = {
             for (const [key, value] of Object.entries(output)){
                 value ?? delete output[key];
             }
-            const filter = {token: this.token}
+            const filter = {tokens: this.token}
             const update = {$set: {[`characters.${newCharacter}.${type}.${newTitleName}.${setVol}.${issue}.issueRundown`]: output}}
             const result = await this.collection.updateOne(filter, update);
             await publish(this.token);

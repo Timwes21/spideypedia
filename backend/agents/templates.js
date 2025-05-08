@@ -1,6 +1,6 @@
 
 export const comicBookDbTemplate = {
-    token: "",
+    tokens: [],
     characters:{
         "Spider-man":{
             Series: {
