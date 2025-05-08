@@ -1,4 +1,5 @@
 import express from 'express';
+import { decryptToken } from '../db/token-handler.js';
 
 
 function authRouter(createUser, authorizeUser, authorizeUsername, collection){
@@ -50,6 +51,17 @@ router.post("/login", async(req, res)=>{
         console.log(err);
         
         res.status(401).json({message: "No user found"});
+    }
+})
+
+router.post("/logout", decryptToken, async(req, res)=>{
+    const data = req.body;
+    try{
+        await forgetUserToken(data);
+        res.status(200).json({message: "token deleted"})
+    }
+    catch(err){
+        res.status(500).json({message: err});
     }
 })
 

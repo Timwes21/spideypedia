@@ -14,31 +14,12 @@ export async function getResponse(content){
 }
 
 export async function getKey(content){
-        const response = await getResponse(content, "and ensure its in json form so i can parse it");
-        const cleaningResponse = response.replace("json", "");
-        const finalResponse = cleaningResponse.split("```")[1];
-        return JSON.parse(finalResponse);
+    const response = await getResponse(content, "and ensure its in json form so i can parse it");
+    console.log(response);
+    
+    const cleaningResponse = response.replace("json", "");
+    const finalResponse = cleaningResponse.split("```")[1];
+    return JSON.parse(finalResponse);
     }
 
-export async function stream(){
-    const response = await ai.models.generateContentStream({
-        model: "gemini-2.0-flash",
-        contents: JSON.stringify(content),
-    });
-    return response.text
-}
-
-    async function google(){
-
-        const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: [
-                "Who individually won the most bronze medals during the Paris olympics in 2024?",
-            ],
-            config: {
-                tools: [{googleSearch: {}}],
-            },
-        });
-        return response;
-    }
 

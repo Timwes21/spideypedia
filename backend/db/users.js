@@ -4,7 +4,7 @@ import { decryptToken } from './token-handler.js';
 
 
 const userTemplate = {
-    token: "",
+    tokens: [],
     userInfo: {
         username: "",
         password: "",
@@ -27,7 +27,7 @@ async function createUser(userData, collection){
         phone
     }
     const token = getToken();
-    newUser.token = token;
+    newUser.tokens.push(token);
     await collection.insertOne(newUser);
     return encrypt(token);
 }
@@ -58,7 +58,7 @@ async function authorizeUser(username, password, collection){
     
 
     const token = getToken();
-    await updateOne(collection, {"userInfo.username": username},{token: token});
+    await collection.updateOne({"userInfo.username": username},{$push: {tokens: token}});
     return encrypt(token);
 }
 
@@ -67,13 +67,19 @@ async function getUsername(encryptedToken, collection){
     const pipeline = [];
     pipeline.push({
         $match: {
-            token : token
+            tokens : token
         },
     })
     const result = await collection.aggregate(pipeline).toArray();
     const user = result[0];
     const username = user.userInfo.username;
     return username;
+}
+
+async function forgetUserToken(data, collection){
+    const {token} = data;
+    await collection.updateOne({ tokens: token }, { $pull: { tokens: token }})
+
 }
 
 export {createUser, authorizeUser, authorizeUsername, getUsername}

@@ -21,7 +21,7 @@ function comicsRouter(updateCollectionRouteHandler, publish, collection){
         }
         catch(err){
             console.log(err);
-            res.status(500).json({message: "Something went wrong, try again later"});
+            res.status(500).json({message: err});
         }
     })
 

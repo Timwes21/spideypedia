@@ -10,12 +10,10 @@ export default function Collection({ refresh }){
 
     return(
         <div className="table" id="collection-table">
-            <h1 className="table-header">Comics</h1>
             <div className="table-contents" >
                 <div className="character-list">
                     <CharList refresh={refresh}/>
                 </div>
-                <AddChar visible={visible}/>
             </div>
         </div>
     )

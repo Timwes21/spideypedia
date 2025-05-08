@@ -7,7 +7,6 @@ function capitalizeFirstLetterOnly(string){
         const firstLetter = string2.toLowerCase().charAt(0).toUpperCase()
         const lowerCaseBody = string2.slice(1).toLowerCase();
         return firstLetter + lowerCaseBody
-
     }
     const wordSplitBySpace = string.split(" ");
     const newWords = []
@@ -46,7 +45,7 @@ export const Actions = {
         
         const newCharacter = capitalizeFirstLetterOnly(character)
         for (const issue of issues){
-            const prompt = `return a filled out version of ${JSON.stringify(issueRundownTemplate)} based on the ${type} ${titleName}, vol ${vol}, issue ${issue}, and don't include if it will be null`
+            const prompt = `return a filled out version of ${JSON.stringify(issueRundownTemplate)} based on the ${type} ${titleName}, vol ${vol}, issue ${issue}, don't include if it will be null, and do not include any citations for example [1, 2, 4], and please use dot notation to add it so you dont override anything already in the database.`
             const output = await getKey(prompt);
             for (const [key, value] of Object.entries(output)){
                 value ?? delete output[key];
@@ -64,7 +63,7 @@ export const Actions = {
     },
     addPrompt: function (){
         this.header = "The user wants to add to their comic collection being handled in a mongodb database, the structure of the database looks like this: " + JSON.stringify(comicBookDbTemplate);
-        this.task = `fill out this template so i can JSON.parse() it : ${JSON.stringify(updateTemplate)} with the user token: ${this.token}. Do not include fields that will remain null` 
+        this.task = `fill out this template so i can JSON.parse() it : ${JSON.stringify(updateTemplate)} with the user token: ${this.token}. Do not include fields that will remain null, and do not include any citations for example [1, 2, 4], and please use dot notation to add it so you dont override anything already in the database` 
         return this;
     },
     add: async function(key){

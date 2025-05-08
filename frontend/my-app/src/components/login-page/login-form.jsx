@@ -73,7 +73,7 @@ export default function LoginForm(){
 
 
     const createAccountContent = (
-        <div id="auth-body">
+        <div className="auth-body">
             <div className="create">
                 <h1 className="auth-heading">Create Account</h1>
                 <div className="credentials">
@@ -83,7 +83,7 @@ export default function LoginForm(){
                     </div>
                     <div className="credential">
                         <label htmlFor="">Password</label>
-                        <input type="text" value={password} onChange={(e)=> setPassword(e.target.value)}/>
+                        <input type="password" value={password} onChange={(e)=> setPassword(e.target.value)}/>
                     </div>
                     <div className="credential">
                         <label htmlFor="">Email</label>
@@ -102,7 +102,7 @@ export default function LoginForm(){
     )
 
     const loginContent = (
-        <div id="auth-body">
+        <div className="auth-body">
             <div className="login">
                 <h1 className="auth-heading">Login</h1>
                 <div className="credentials">
@@ -112,7 +112,7 @@ export default function LoginForm(){
                     </div>
                     <div className="credential">
                         <label htmlFor="">Password</label>
-                        <input type="text" value={password} onChange={(e)=> setPassword(e.target.value)}/>
+                        <input type="password" value={password} onChange={(e)=> setPassword(e.target.value)}/>
                     </div>
                     <p className="message">{ loginMessage }</p>
                     <button onClick={ login }>Log in</button>

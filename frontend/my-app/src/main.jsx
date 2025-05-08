@@ -2,15 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './style/home-page.css'
 import './style/auth.css'
-import Tables from './components/home-page/Tables.jsx'
 import LoginForm from './components/login-page/login-form.jsx'
-import LogoutButton from './components/home-page/logout-button.jsx'
+import { NavBar } from './components/home-page/nav-bar.jsx'
+import HomeBody from './components/home-page/home-body.jsx'
 
 
 function homePage(){
   createRoot(document.getElementById('root')).render(
     <StrictMode>
-    <Tables />
+      <NavBar/>
+    <HomeBody />
   </StrictMode>,
 )
 }

@@ -9,6 +9,8 @@ export default function AddChar(){
     const token = localStorage.getItem("comicManagementToken");
     
     function addCharacter(){
+        setVisible(!visible)
+        setCharacter("");
         character && fetch(addCharacterApi, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -28,5 +30,5 @@ export default function AddChar(){
     )
     
 
-    return visible? div: <button onClick={()=> setVisible(!visible)}>Add a Character</button>
+    return visible? div: <button className="add-char" onClick={()=> setVisible(!visible)}>Add a Character</button>
 }

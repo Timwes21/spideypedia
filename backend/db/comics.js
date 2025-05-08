@@ -28,16 +28,15 @@ const issueTemplate = {
 async function addCharacter(data, collection){
     const {token, character} = data;
     const characterKey = `characters.${character}`;
-    console.log(collection);
     
-    await updateOne(collection, {token : token},{ [characterKey]: {}})
+    await updateOne(collection, {tokens : token},{ [characterKey]: {}})
 }
 
 async function addToCharacter(data, collection){
     const { token, characterData } = data;
     const {character, type, name, vol} = characterData
     const key = `characters.${character}.${type}.${name}.vol ${vol}`;
-    await updateOne(collection, {token : token},{ [key]: {}});
+    await updateOne(collection, {tokens : token},{ [key]: {}});
 }
 
 
@@ -68,7 +67,7 @@ async function addIssue(data, collection){
     
     await updateOne(
         collection,
-        {token : token},
+        {tokens : token},
         {[key]: issueObject}
     );
 }
@@ -79,7 +78,7 @@ async function deleteIssue(data, collection){
     const pipeline = [];
     pipeline.push({
         $match: {
-            token : token
+            tokens : token
         },
     })
     const result = await collection.aggregate(pipeline).toArray();
@@ -107,7 +106,7 @@ async function deleteIssue(data, collection){
     }
     await updateOne(
         collection,
-        {token : token},
+        {tokens : token},
         {characters: chars}
     )
     
@@ -115,7 +114,7 @@ async function deleteIssue(data, collection){
 }
 
 async function getCharacters(token, collection){
-    const results = await findOne(collection, {token: token},{ characters: 1});
+    const results = await findOne(collection, {tokens: token},{ characters: 1});
     return results?.characters || {};
 }
 
@@ -126,7 +125,7 @@ async function updateDetails(data, collection) {
     const pipeline = [];
     pipeline.push({
         $match: {
-            token : token
+            tokens : token
         },
     })
     const result = await collection.aggregate(pipeline).toArray();
@@ -154,7 +153,7 @@ async function updateDetails(data, collection) {
     
     await updateOne(
         collection,
-        {token : token},
+        {tokens : token},
         {characters: chars}
     )
 }
@@ -164,7 +163,7 @@ async function deleteChar(data, collection){
     const pipeline = [];
     pipeline.push({
         $match: {
-            token : token
+            tokens : token
         },
     })
     const result = await collection.aggregate(pipeline).toArray();
@@ -174,7 +173,7 @@ async function deleteChar(data, collection){
     
     await updateOne(
         collection,
-        {token : token},
+        {tokens : token},
         {characters: chars}
     )
     

@@ -3,6 +3,7 @@ import CharContents from "./char-contents.jsx";
 import AddTitle from "./update-comic-list/add-title.jsx";
 import { DeleteChar } from "./update-comic-list/delete-char.jsx";
 import { wsLink } from "../../../routes.jsx";
+import AddChar from "./update-comic-list/add-char.jsx";
 const token = localStorage.getItem("comicManagementToken")
 
 export default function CharList({refresh}){
@@ -66,6 +67,7 @@ export default function CharList({refresh}){
             </>
 
             ))}
+            <AddChar/>
         </div>
     )
 }
