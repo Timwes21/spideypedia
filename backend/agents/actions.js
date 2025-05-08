@@ -1,6 +1,6 @@
 import { publish } from "../utils/redis.js";
 import { getKey } from "./gemini/llm.js";
-import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate, viewTemplate, addTemplate, removeTemplate, issueRundownTemplate, addManyIssuePromptTemplate, addManyIssueTemplate } from "./templates.js";
+import { updateTemplate, aggregateTemplate, comicBookDbTemplate, triviaTemplate, unsureTemplate, viewTemplate, addTemplate, removeTemplate, issueRundownTemplate, addManyIssuePromptTemplate, addManyIssueTemplate } from "../templates.js";
 
 function capitalizeFirstLetterOnly(string){
     function capitalizeFirstLetter(string2){

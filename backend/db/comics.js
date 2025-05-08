@@ -2,7 +2,8 @@ import { findOne, updateOne } from './db.js'
 import { getKey } from '../agents/gemini/llm.js';
 import fs from "fs"
 import { deleteImage, uploadImageToCloudinary } from '../utils/cloudinary.js';
-import { z } from 'zod'
+import { z } from 'zod';
+import { issueRundownTemplate } from '../templates.js';
 
 
 
@@ -21,17 +22,7 @@ import { z } from 'zod'
 
 
 const issueTemplate = {
-    issueRundown:{
-        Name: "include the official name for the story, if there is more than one story in an issue include both names seperated by a ; example the name of the story from amazing spiderman issue 5 vol 1 is 'Marked for Destruction by Dr. Doom!' ",
-        Artist: "",
-        Writer: "",
-        'First Appearances': null,
-        'Major Deaths': null,
-        'Costume Changes': null,
-        'Story Arc': null, 
-        Crossovers : "",
-        'Publication Date': "May 1963 for example",
-    },
+    issueRundown:{...issueRundownTemplate},
     image: {
         url: null,
         pubicID: null
