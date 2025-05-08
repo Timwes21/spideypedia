@@ -65,6 +65,7 @@ export default function AddIssue({titleName, type, character, vol}){
             <button onClick={(e)=>{
                     e.preventDefault();
                     add();
+                    cancel();
                 }
             }>Add</button>
             <button onClick={cancel}>Cancel</button>

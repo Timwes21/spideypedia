@@ -96,14 +96,12 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
                 return newDetails;
             
             }
-
+        
         return Object.entries(issueDetailList).map(([label, detail])=>{
             return (<span key={label}><strong>{label}: </strong>{detail}</span>)})
     }
     
     function renderImage(){
-        console.log(image);
-        
         return image && <img src={image} className="issue-image" alt="comic-cover"/>;
     }
     
@@ -117,7 +115,6 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
                 <label id="add-image-label" className="make-smaller" htmlFor="image-input-details">{addPhotoText}</label>
                 <input id="image-input-details" type="file" accept="image/*" onChange={(e)=>{
                     setImageFile(e.target.files[0]);
-                    console.log(imageFile);
                     setImage(URL.createObjectURL(e.target.files[0]));}}/>
                 </>)
         }

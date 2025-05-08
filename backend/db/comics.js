@@ -2,8 +2,22 @@ import { findOne, updateOne } from './db.js'
 import { getKey } from '../agents/gemini/llm.js';
 import fs from "fs"
 import { deleteImage, uploadImageToCloudinary } from '../utils/cloudinary.js';
+import { z } from 'zod'
 
 
+
+// const parser = StructuredOutputParser.fromZodSchema(
+//     z.object({
+//         storyName: z.string(),
+//         releaseDate: z.string(),
+//         artist: z.string(),
+//         writer: z.string(),
+//         'First Appearances': z.string(),
+//         'Major Deaths': z.string(),
+//         'Costume Changes': z.string(),
+//         'Story Arc': z.string(), 
+//     })
+// )
 
 
 const issueTemplate = {
@@ -44,7 +58,7 @@ async function addIssue(data, collection){
     const {token, issueDetails, path} = data;
     const {character, type, titleName, issueNumber, vol} = JSON.parse(issueDetails)
     
-    const prompt = `short answer only, generate a filled out json object based off this template: ${JSON.stringify(issueTemplate)}, and the comic info: ${type} ${titleName}, vol ${vol}, number ${issueNumber}`;
+    const prompt = `short answer only, generate a filled out json object based off this template: ${JSON.stringify(issueTemplate)}, and the comic info: ${type} ${titleName}, vol ${vol}, number ${issueNumber}, , and do not include any citations for example [1, 2, 4], and please use dot notation to add it so you dont override anything already in the database.`;
     const issueObject = await getKey(prompt);
     console.log(issueObject);
     

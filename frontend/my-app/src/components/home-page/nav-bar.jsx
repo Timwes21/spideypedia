@@ -3,8 +3,6 @@ export function NavBar(){
         localStorage.removeItem("comicManagementToken");
         window.location.reload();
     }
-    console.log(localStorage.getItem("comicManagementToken"));
-    
 
     return(
         <nav>

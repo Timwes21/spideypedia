@@ -13,12 +13,12 @@
     height: 100vh;
 }
 .create, .login{
-    background-color: rgb(255, 24, 24);
+    background: radial-gradient(circle, #0000ff, rgb(21, 21, 255));
     color: white;
     /* -webkit-text-stroke: 1px black; */
     font-family: fantasy;
     box-shadow: 0px 0px 5px black;
-    border: 5px solid black;
+    border: 5px solid rgb(0, 4, 78);
     border-radius: 15px;
     width: 25vw;
 }
