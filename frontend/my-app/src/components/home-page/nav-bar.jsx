@@ -1,7 +1,18 @@
+import { authBase } from "../../routes";
+
 export function NavBar(){
     function logout(){
-        localStorage.removeItem("comicManagementToken");
-        window.location.reload();
+        localStorage.getItem("comicManagementToken");
+        fetch(authBase + "/logout", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({token: localStorage.getItem("comicManagementToken")})
+        })
+        .then(()=>{
+            localStorage.removeItem("comicManagementToken");
+            window.location.reload();
+        })
+        .catch(console.log("something went wrong"))
     }
 
     return(

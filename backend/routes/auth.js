@@ -1,8 +1,8 @@
 import express from 'express';
-import { decryptToken } from '../db/token-handler.js';
+import { withDecryptToken } from '../db/token-handler.js';
 
 
-function authRouter(createUser, authorizeUser, authorizeUsername, collection){
+function authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, collection){
     const router = express.Router()
 
     async function checkIfUserExists(req, res, next){
@@ -16,8 +16,6 @@ function authRouter(createUser, authorizeUser, authorizeUsername, collection){
         }
         res.status(401).json({message: "username already exists"});
     }
-
-
 
 
 
@@ -41,10 +39,7 @@ router.post("/login", async(req, res)=>{
     
     try{
         const args = Object.values(data);
-        console.log(args);
         const token = await authorizeUser(...args, collection);
-        console.log("token", token);
-        
         res.status(200).json({message: "logged in", token: token})
     }
     catch(err){
@@ -54,10 +49,10 @@ router.post("/login", async(req, res)=>{
     }
 })
 
-router.post("/logout", decryptToken, async(req, res)=>{
+router.post("/logout", withDecryptToken, async(req, res)=>{
     const data = req.body;
     try{
-        await forgetUserToken(data);
+        await forgetUserToken(data, collection);
         res.status(200).json({message: "token deleted"})
     }
     catch(err){

@@ -4,7 +4,7 @@ import http from 'http';
 import authRouter from './routes/auth.js';
 import agentRouter from './routes/talk-to-agent.js';
 import collectionRouter from './routes/update-collection.js';
-import { createUser, authorizeUsername, authorizeUser} from './db/users.js';
+import { createUser, authorizeUsername, authorizeUser, forgetUserToken} from './db/users.js';
 import {productionCollection } from './db/db.js'
 import { updateCollectionRouteHandler, getCharacters} from './db/comics.js';
 import Agent from './agents/agent.js';
@@ -16,15 +16,15 @@ const app = express();
 const server = http.createServer(app);
 app.use(express.json());
 app.use(cors({ 
-    // origin: 'http://localhost:5173', 
-    origin: 'https://spideypedia.com',
+    origin: 'http://localhost:5173', 
+    // origin: 'https://spideypedia.com',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }, ));
 
 ws(server, getCharacters, redisSub, productionCollection);
-app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, productionCollection));
+app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, productionCollection));
 app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, productionCollection));
 app.use('/agent', agentRouter(Agent, productionCollection));
 

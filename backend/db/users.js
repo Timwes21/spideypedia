@@ -78,8 +78,11 @@ async function getUsername(encryptedToken, collection){
 
 async function forgetUserToken(data, collection){
     const {token} = data;
+    console.log("discarded token", token);
     await collection.updateOne({ tokens: token }, { $pull: { tokens: token }})
+    
+    
 
 }
 
-export {createUser, authorizeUser, authorizeUsername, getUsername}
+export {createUser, authorizeUser, authorizeUsername, getUsername, forgetUserToken}
