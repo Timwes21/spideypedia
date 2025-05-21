@@ -58,8 +58,8 @@ class FilterAndUpdateForRemove(BaseModel):
     being_updated: str = Field(description="the field being removed")
 
 
-class Aggregates(TypedDict):
-    aggregates: list = Field(description="an array of aggregates for the mongodb database")    
+class Aggregates(BaseModel):
+    aggregates: list[dict] = Field(description="an array of aggregates for the mongodb database")    
     
 
 

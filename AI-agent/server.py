@@ -28,6 +28,7 @@ async def talk_to_agent(ws: WebSocket):
             token = data["token"]
             print(token)
             state = router_workflow.invoke({"input": user_input, "token": token})
+            print(state)
             await ws.send_text(state["output"])
             
     except WebSocketDisconnect as e:

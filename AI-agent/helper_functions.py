@@ -2,7 +2,7 @@ from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 from google import genai
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
-from augmented_llms import get_filter_and_update_keys_for_add_from_llm, get_filter_and_update_keys_for_remove_from_llm, get_update_details_from_llm
+from llm import get_filter_and_update_keys_for_add_from_llm, get_filter_and_update_keys_for_remove_from_llm, get_update_details_from_llm
 from models import convert_names_for_comic_details, comicBookDbTemplate, issueRundownTemplate
 
 def google_search(content):

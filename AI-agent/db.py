@@ -3,9 +3,10 @@ from models import issueRundownTemplate
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 import os
-from models import State
+from models import State, comicBookDbTemplate, Aggregates
+# from llm import llm
 load_dotenv()
-from augmented_llms import(
+from llm import(
     get_comic_details,
     get_aggregates,
 )
@@ -22,20 +23,14 @@ from helper_functions import (
 url = os.environ["URL"]
 client = MongoClient(url)
 db = client["comicManagement"]
-collection = db["test"]
+collection = db["users"]
 
 
 
 
 def check_collection(task, state: State):
-    aggregates = get_aggregates.invoke([
-            SystemMessage(
-                content="the user wants to check on their comic collection being handled by mongodb give an array of aggregates based on the users input, and here is their token: " + state["token"]
-            ),
-            HumanMessage(content=task),
-        ]
-    )
-    result = collection.aggregate(aggregates)
+    aggregates = get_aggregates(task, state)
+    result = list(collection.aggregate(aggregates))
     return {"result": result}
 
 

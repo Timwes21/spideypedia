@@ -1,7 +1,7 @@
 from langchain_core.messages import HumanMessage, SystemMessage
 from models import State
 from db import actions
-from augmented_llms import(
+from llm import(
     router,
     get_tasks)
 from helper_functions import google_search
@@ -59,7 +59,7 @@ def formulate_response(state: State):
         ]
     )
     
-    return {"agent_response": response.content}
+    return {"output": response.content}
 
 
 def comic_collection(state: State):
