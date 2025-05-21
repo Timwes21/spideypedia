@@ -50,12 +50,15 @@ export default function LoginForm(){
             body: JSON.stringify({username: username, password: password})
         })
         .then(async(response)=>{
+            
+            
             const status = response.status;
             const data = await response.json()
+            
             if (status == 200){
                 const { message, token } = data;
                 console.log(message);
-                localStorage.setItem("comicManagementToken", JSON.stringify(token));
+                localStorage.setItem("comicManagementToken", token);
                 window.location.reload();
             }
             else{

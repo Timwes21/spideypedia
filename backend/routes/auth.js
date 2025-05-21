@@ -1,5 +1,4 @@
 import express from 'express';
-import { withDecryptToken } from '../db/token-handler.js';
 
 
 function authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, collection){
@@ -8,7 +7,6 @@ function authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToke
     async function checkIfUserExists(req, res, next){
         const username = req.body.username;
         const result = await authorizeUsername(username, collection);
-        console.log(result);
     
         if (result){
             console.log('here');
@@ -49,7 +47,7 @@ router.post("/login", async(req, res)=>{
     }
 })
 
-router.post("/logout", withDecryptToken, async(req, res)=>{
+router.post("/logout", async(req, res)=>{
     const data = req.body;
     try{
         await forgetUserToken(data, collection);

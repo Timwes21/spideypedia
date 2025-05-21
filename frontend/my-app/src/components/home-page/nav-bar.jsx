@@ -12,7 +12,7 @@ export function NavBar(){
             localStorage.removeItem("comicManagementToken");
             window.location.reload();
         })
-        .catch(console.log("something went wrong"))
+        .catch(err=>console.log("something went wrong", err))
     }
 
     return(

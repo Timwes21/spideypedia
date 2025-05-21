@@ -1,5 +1,4 @@
 import { WebSocketServer } from 'ws';
-import { decryptToken } from '../db/token-handler.js';
 
 async function ws(server, getCharacters, redisSub, collection){
     const wss = new WebSocketServer({ server });
@@ -17,10 +16,11 @@ async function ws(server, getCharacters, redisSub, collection){
     wss.on("connection", (ws)=>{
         ws.on("message", async(message)=>{
             try{
-                const unparsedToken = JSON.parse(message);
-                const token = decryptToken(unparsedToken);
+                const token = JSON.parse(message);
+                
                 ws.token = token;
                 const chars = await getCharacters(token, collection);
+                
                 ws.send(JSON.stringify({message: chars}));
             }
             catch(err){

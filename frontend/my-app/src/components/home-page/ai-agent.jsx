@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { submitToAgentApi } from'../../routes.jsx'
+import { submitToAgentWs } from'../../routes.jsx'
 
 
 export default function Agent(){
@@ -9,19 +9,20 @@ export default function Agent(){
     const [messages, setMessages] = useState([
     ]);
 
-    function submit(){
-        setAgentReply("Loading...")
-        input && fetch(submitToAgentApi, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({token: localStorage.getItem("comicManagementToken"), input: input})
-        })
-        .then(response=>response.json())
-        .then(data=>{
-            addAgentReply(data.message)
-        })
-        .catch(err=> console.log(err))
+
+    const ws = new WebSocket(submitToAgentWs);
+    ws.onopen  = () =>{
+        console.log("ai assistant ready");
     }
+    ws.onerror = (err) => {
+        console.log(err);
+    }
+    ws.onmessage = (event) =>{
+        addAgentReply(event.data)
+    }
+
+
+    
 
     function displayMessages(){
         return messages.map((message, index)=>{
@@ -38,7 +39,7 @@ export default function Agent(){
     }
 
     const send = () =>{
-        submit()
+        ws.send(JSON.stringify({token: localStorage.getItem("comicManagementToken"), input: input}))
         setMessages(prev=>[...prev, {"user": input}]);
         setInput("");
     }

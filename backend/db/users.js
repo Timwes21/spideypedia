@@ -1,6 +1,5 @@
 import { encrypt, decrypt, getToken } from '../utils/encryption.js';
 import { updateOne, findOne } from './db.js';
-import { decryptToken } from './token-handler.js';
 
 
 const userTemplate = {
@@ -29,7 +28,7 @@ async function createUser(userData, collection){
     const token = getToken();
     newUser.tokens.push(token);
     await collection.insertOne(newUser);
-    return encrypt(token);
+    return token;
 }
 
 async function authorizeUsername(username, collection){
@@ -47,7 +46,6 @@ async function authorizeUser(username, password, collection){
     const { iv, encrypted } = results.userInfo.password;
     
     const decryptedPassword = decrypt(iv, encrypted);
-    console.log(decryptedPassword);
 
     if (decryptedPassword !== password){
         console.log("this should not happen");
@@ -59,11 +57,12 @@ async function authorizeUser(username, password, collection){
 
     const token = getToken();
     await collection.updateOne({"userInfo.username": username},{$push: {tokens: token}});
-    return encrypt(token);
+    
+    
+    return token;
 }
 
-async function getUsername(encryptedToken, collection){
-    const token = decryptToken(encryptedToken);
+async function getUsername(token, collection){
     const pipeline = [];
     pipeline.push({
         $match: {
@@ -80,9 +79,6 @@ async function forgetUserToken(data, collection){
     const {token} = data;
     console.log("discarded token", token);
     await collection.updateOne({ tokens: token }, { $pull: { tokens: token }})
-    
-    
-
 }
 
 export {createUser, authorizeUser, authorizeUsername, getUsername, forgetUserToken}

@@ -3,7 +3,7 @@ const base = developing?"http://localhost:3000":"https://spideypedia-production.
 const wsLink = developing?"ws://localhost:3000":"wss://spideypedia-production.up.railway.app";
 const comicsBase = base + "/comics";
 const authBase = base + "/auth";
-const submitToAgentApi = base + "/agent/convo";
+const submitToAgentWs = "ws://127.0.0.1:8000/ws";
 
-export {comicsBase, authBase, submitToAgentApi, wsLink}
+export {comicsBase, authBase, submitToAgentWs, wsLink}
 
