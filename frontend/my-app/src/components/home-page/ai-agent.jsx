@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { submitToAgentWs } from'../../routes.jsx'
 
 
@@ -9,17 +9,29 @@ export default function Agent(){
     const [messages, setMessages] = useState([
     ]);
 
+    const ws = useRef(null);
 
-    const ws = new WebSocket(submitToAgentWs);
-    ws.onopen  = () =>{
-        console.log("ai assistant ready");
-    }
-    ws.onerror = (err) => {
-        console.log(err);
-    }
-    ws.onmessage = (event) =>{
-        addAgentReply(event.data)
-    }
+
+    useEffect(()=>{
+        const ws = new WebSocket(submitToAgentWs);
+        ws.current.onopen  = () =>{
+            console.log("ai assistant ready");
+        }
+        ws.current.onerror = (err) => {
+            console.log(err);
+        }
+        ws.current.onmessage = (event) =>{
+            addAgentReply(event.data)
+        }
+
+        return () => {
+            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+                ws.current.close();
+            }
+        };
+
+    })
+
 
 
     
@@ -39,7 +51,10 @@ export default function Agent(){
     }
 
     const send = () =>{
-        ws.send(JSON.stringify({token: localStorage.getItem("comicManagementToken"), input: input}))
+        ws.current.send(JSON.stringify({
+                token: localStorage.getItem("comicManagementToken"),
+                input: input
+            }));
         setMessages(prev=>[...prev, {"user": input}]);
         setInput("");
     }
