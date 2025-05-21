@@ -13,7 +13,7 @@ export default function Agent(){
 
 
     useEffect(()=>{
-        const ws = new WebSocket(submitToAgentWs);
+        ws.current = new WebSocket(submitToAgentWs);
         ws.current.onopen  = () =>{
             console.log("ai assistant ready");
         }
@@ -30,7 +30,7 @@ export default function Agent(){
             }
         };
 
-    })
+    }, [])
 
 
 
