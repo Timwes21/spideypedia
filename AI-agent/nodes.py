@@ -46,7 +46,7 @@ def trivia(state: State):
     content = "You are a comic expert and you need to anwser the users question: " + state["input"]
     result = google_search(content)
     return {"output": result}
-    
+        
 
 def formulate_response(state: State):
     results = state["results"]
@@ -66,7 +66,7 @@ def comic_collection(state: State):
     tasks = get_tasks.invoke(
         [
             SystemMessage(
-                content=f"You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, and if the user as adding multiple issues break each issue into a seperate task"
+                content=f"You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue make sure the action is add_comic, if adding anyting else do add"
             ),
             HumanMessage(content=state['input'])
         ]
@@ -77,6 +77,7 @@ def comic_collection(state: State):
     for current_task in tasks['tasks']:
         task = current_task["task"]
         action =  current_task["action"]
+        print(action)
         result = actions[action](task, state)
         results[action] = result
         
