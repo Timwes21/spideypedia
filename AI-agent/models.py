@@ -78,7 +78,7 @@ issueRundownTemplate ={
 convert_names_for_comic_details = {
     "name": "Name",
     "artist": "Artist",
-    "writer": "Write",
+    "writer": "Writer",
     "first_appearances": "First Appearances",
     "major_deaths": "Major Deaths",
     "costume_changes": "Costume Changes",

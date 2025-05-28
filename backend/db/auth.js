@@ -29,7 +29,7 @@ async function createUser(userData, collection){
     newUser.tokens.push(token);
     await collection.insertOne(newUser);
     return token;
-}
+    }
 
 async function authorizeUsername(username, collection){
     const result = await collection.find({"userInfo.username": username}).toArray();
@@ -48,8 +48,7 @@ async function authorizeUser(username, password, collection){
     const decryptedPassword = decrypt(iv, encrypted);
 
     if (decryptedPassword !== password){
-        console.log("this should not happen");
-        throw new Error("Password is Incorrect");
+        return false
     }
 
     await collection.findOne({"userInfo.username": username}) ?? (() => {throw new Error("No user found")})()
@@ -78,7 +77,8 @@ async function getUsername(token, collection){
 async function forgetUserToken(data, collection){
     const {token} = data;
     console.log("discarded token", token);
-    await collection.updateOne({ tokens: token }, { $pull: { tokens: token }})
+    const result = await collection.updateOne({ tokens: token }, { $pull: { tokens: token }})
+    return result
 }
 
 export {createUser, authorizeUser, authorizeUsername, getUsername, forgetUserToken}

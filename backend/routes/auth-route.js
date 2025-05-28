@@ -38,12 +38,16 @@ router.post("/login", async(req, res)=>{
     try{
         const args = Object.values(data);
         const token = await authorizeUser(...args, collection);
-        res.status(200).json({message: "logged in", token: token})
+        if (token){
+            res.status(200).json({message: "logged in", token: token})
+            return;
+        }
+        res.status(401).json({message: "No user found",})
     }
     catch(err){
         console.log(err);
         
-        res.status(401).json({message: "No user found"});
+        res.status(500).json({message: "No user found"});
     }
 })
 

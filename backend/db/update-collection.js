@@ -1,4 +1,4 @@
-import { findOne, updateOne } from './db.js'
+import { updateOne } from './db.js'
 import { getKey } from '../agents/gemini/llm.js';
 import { deleteImage, uploadImageToCloudinary } from '../utils/cloudinary.js';
 import { issueRundownTemplate } from '../templates.js';
@@ -20,14 +20,16 @@ async function addCharacter(data, collection){
     const {token, character} = data;
     const characterKey = `characters.${character}`;
     
-    await updateOne(collection, {tokens : token},{ [characterKey]: {}})
+    const result = await collection.updateOne({tokens : token},{$set: { [characterKey]: {}}})
+    return result;
 }
 
 async function addToCharacter(data, collection){
     const { token, characterData } = data;
     const {character, type, name, vol} = characterData
     const key = `characters.${character}.${type}.${name}.vol ${vol}`;
-    await updateOne(collection, {tokens : token},{ [key]: {}});
+    const finalResult = await collection.updateOne({tokens : token},{$set: {[key]: {}}});
+    return finalResult;
 }
 
 
@@ -56,11 +58,12 @@ async function addIssue(data, collection){
     
     const key = `characters.${character}.${type}.${titleName}.${vol}.${issueNumber}`;
     
-    await updateOne(
-        collection,
+    const finalResult = await collection.updateOne(
         {tokens : token},
-        {[key]: issueObject}
+        {$set: {[key]: issueObject}}
     );
+
+    return finalResult;
 }
 
 async function deleteIssue(data, collection){
@@ -95,11 +98,12 @@ async function deleteIssue(data, collection){
             }
         }
     }
-    await updateOne(
-        collection,
+    const finalResult = await collection.updateOne(
         {tokens : token},
-        {characters: chars}
+        {$set: {characters: chars}}
     )
+
+    return finalResult;
     
 
 }
@@ -147,11 +151,12 @@ async function updateDetails(data, collection) {
     }
     chars[character][type][titleName][vol][issueNumber].issueRundown = issueDetails;
     
-    await updateOne(
-        collection,
+    const finalResult = await collection.updateOne(
         {tokens : token},
-        {characters: chars}
+        {$set: {characters: chars}}
     )
+
+    return finalResult;
 }
 
 async function deleteChar(data, collection){
@@ -167,11 +172,11 @@ async function deleteChar(data, collection){
     const chars = user.characters;
     delete chars[character];
     
-    await updateOne(
-        collection,
+    const finalResult = await collection.updateOne(
         {tokens : token},
-        {characters: chars}
+        {$set:{characters: chars}}
     )
+    return finalResult
     
 
 }
