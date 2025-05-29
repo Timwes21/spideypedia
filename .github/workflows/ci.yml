@@ -8,6 +8,7 @@ on:
 
 jobs:
   node_tests:
+    runs-on: ubuntu-latest
     env: 
       ALGORITHM: ${{ secrets.ALGORITHM }}
       API_KEY: ${{ secrets.API_KEY }}
@@ -20,7 +21,6 @@ jobs:
       OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
       PASSWORD: ${{ secrets.PASSWORD }}
       PORT: ${{ secrets.PORT }}
-    runs-on: ubuntu-latest
     defaults: 
       run:
         working-directory: ./backend
