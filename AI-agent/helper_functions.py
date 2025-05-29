@@ -9,7 +9,7 @@ from llm import get_filter_and_update_keys_for_add_from_llm, get_filter_and_upda
 from models import convert_names_for_comic_details, comicBookDbTemplate, issueRundownTemplate
 
 def google_search(content):
-    api_key = os.environ['GOOGLE_API_KEY']
+    api_key = os.environ['API_KEY']
     client = genai.Client(api_key=api_key)
     model_id = "gemini-2.0-flash"
     google_search_tool = Tool(
