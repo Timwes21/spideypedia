@@ -2,7 +2,10 @@ from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 from google import genai
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
-from llm import get_filter_and_update_keys_for_add_from_llm, get_filter_and_update_keys_for_remove_from_llm, get_update_details_from_llm
+from models import Tasks
+from langchain.output_parsers import PydanticOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from llm import get_filter_and_update_keys_for_add_from_llm, get_filter_and_update_keys_for_remove_from_llm, get_update_details_from_llm, llm
 from models import convert_names_for_comic_details, comicBookDbTemplate, issueRundownTemplate
 
 def google_search(content):
@@ -58,5 +61,9 @@ def get_update_details(user_input):
     return result
 
 
-
+def get_tasks_chain(user_input):
+    parser = PydanticOutputParser(pydantic_object=Tasks)
+    prompt = ChatPromptTemplate.from_template("You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue plaese make sure the action is add_comic, if adding anyting else do add_general. The program hinges on the distinction between add_general and add_comics. If removing you can return remove and if asking about the collection return check_collection: {user_input} {format}").partial(format=parser.get_format_instructions())
+    chain = prompt | llm | parser
+    return chain.invoke({"user_input": user_input})
 

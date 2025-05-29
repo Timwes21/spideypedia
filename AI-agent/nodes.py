@@ -1,10 +1,10 @@
 from langchain_core.messages import HumanMessage, SystemMessage
 from models import State
-from db import actions
+from actions import actions
 from llm import(
     router,
     get_tasks)
-from helper_functions import google_search
+from helper_functions import google_search, get_tasks_chain
 from llm import llm
 from models import comicBookDbTemplate
 
@@ -63,21 +63,13 @@ def formulate_response(state: State):
 
 
 def comic_collection(state: State):
-    tasks = get_tasks.invoke(
-        [
-            SystemMessage(
-                content=f"You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue make sure the action is add_comic, if adding anyting else do add"
-            ),
-            HumanMessage(content=state['input'])
-        ]
-    )
+    tasks = get_tasks_chain(state["input"])
     results = {}
     print(tasks)
     
-    for current_task in tasks['tasks']:
+    for current_task in tasks.tasks:
         task = current_task["task"]
-        action =  current_task["action"]
-        print(action)
+        action = current_task["action"]
         result = actions[action](task, state)
         results[action] = result
         

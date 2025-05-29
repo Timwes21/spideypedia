@@ -1,4 +1,4 @@
-from typing_extensions import Literal, Optional
+from typing_extensions import Literal, Optional, Any
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
 
@@ -12,6 +12,7 @@ class State(TypedDict):
     agent_response: str
     filter_key: dict
     update_key: dict
+    collection: Any
 
 
 class ComicDetails(TypedDict):
@@ -36,11 +37,11 @@ class UpdateComics(BaseModel):
 
 
 class ClassifyTasks(TypedDict):
-    action: Literal["add", "remove", "check_collection", "add_comics"]
+    action: Literal["add_general", "remove", "check_collection", "add_comics"]
     task: str = Field(description="description of the task so i know ")
 
 
-class Tasks(TypedDict):
+class Tasks(BaseModel):
     tasks: list[ClassifyTasks] = Field(description="amount of tasks the user wants to execute")
 
 

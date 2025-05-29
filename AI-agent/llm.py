@@ -3,7 +3,8 @@ import os
 import json
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
-
+from dotenv import load_dotenv
+load_dotenv()
 
 api_key = os.environ['GOOGLE_API_KEY']
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)

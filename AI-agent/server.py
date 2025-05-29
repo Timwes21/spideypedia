@@ -1,6 +1,7 @@
 from fastapi import Request, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from graph import router_workflow
+from db import production_collection
 
 app = FastAPI()
 
@@ -24,11 +25,7 @@ async def talk_to_agent(ws: WebSocket):
         while True:
             data = await ws.receive_json()
             print(data)
-            user_input = data["input"]
-            token = data["token"]
-            print(token)
-            state = router_workflow.invoke({"input": user_input, "token": token})
-            print(state)
+            state = router_workflow.invoke({"input": data["input"], "token": data["token"], "collection": production_collection})
             await ws.send_text(state["output"])
             
     except WebSocketDisconnect as e:
