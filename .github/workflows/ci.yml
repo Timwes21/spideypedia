@@ -6,21 +6,22 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env: 
+  ALGORITHM: ${{ secrets.ALGORITHM }}
+  API_KEY: ${{ secrets.API_KEY }}
+  CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+  CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+  CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
+  DATABASE: ${{ secrets.DATABASE }}
+  GEMINI_API_2: ${{ secrets.GEMINI_API_2 }}
+  KEY: ${{ secrets.KEY }}
+  OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  PORT: ${{ secrets.PORT }}
+
 jobs:
   node_tests:
     runs-on: ubuntu-latest
-    env: 
-      ALGORITHM: ${{ secrets.ALGORITHM }}
-      API_KEY: ${{ secrets.API_KEY }}
-      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-      CLOUD_NAME: ${{ secrets.CLOUD_NAME }}
-      DATABASE: ${{ secrets.DATABASE }}
-      GEMINI_API_2: ${{ secrets.GEMINI_API_2 }}
-      KEY: ${{ secrets.KEY }}
-      OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
-      PASSWORD: ${{ secrets.PASSWORD }}
-      PORT: ${{ secrets.PORT }}
     defaults: 
       run:
         working-directory: ./backend
