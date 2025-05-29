@@ -18,6 +18,7 @@ env:
   OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
   PASSWORD: ${{ secrets.PASSWORD }}
   PORT: ${{ secrets.PORT }}
+  URL: ${{ secrets.URL }}
 
 jobs:
   node_tests:
