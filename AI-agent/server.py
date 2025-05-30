@@ -25,7 +25,7 @@ async def talk_to_agent(ws: WebSocket):
         while True:
             data = await ws.receive_json()
             print(data)
-            state = router_workflow.invoke({"input": data["input"], "token": data["token"], "collection": production_collection})
+            state = await router_workflow.ainvoke({"input": data["input"], "token": data["token"], "collection": production_collection})
             await ws.send_text(state["output"])
             
     except WebSocketDisconnect as e:

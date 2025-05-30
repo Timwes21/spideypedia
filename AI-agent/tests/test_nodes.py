@@ -9,6 +9,7 @@ from nodes import (
     formulate_response,
     comic_collection
 )
+import pytest
 
 from db import practice_collection
 
@@ -35,6 +36,7 @@ def test_formulate_response():
     result = formulate_response({"input": "add amazing spiderman", "results": {"modifiedCount": 1, "matchedCount": 1}})
     assert isinstance(result['output'], str) 
     
-def test_comic_collection():
-    result = comic_collection({"input": "add amazing spiderman", "token": "token", "collection": practice_collection})
+@pytest.mark.asyncio
+async def test_comic_collection():
+    result = await comic_collection({"input": "add amazing spiderman", "token": "token", "collection": practice_collection})
     assert isinstance(result['results'], dict)

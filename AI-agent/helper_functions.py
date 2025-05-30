@@ -2,7 +2,7 @@ from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 from google import genai
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
-from models import Tasks
+from models import Tasks, FilterAndUpdateForRemove, FilterAndUpdateForAdd
 from langchain.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from llm import get_filter_and_update_keys_for_add_from_llm, get_filter_and_update_keys_for_remove_from_llm, get_update_details_from_llm, llm
@@ -35,14 +35,11 @@ def google_search(content):
 def get_filter_and_update_keys(task, label):
     is_add = label == "$set"
     action = "add" if is_add else "remove"
-    llm = get_filter_and_update_keys_for_add_from_llm if is_add else get_filter_and_update_keys_for_remove_from_llm
-    update_and_filter = llm.invoke([
-            SystemMessage(
-                content=f"You are part of an agentic system that handles operations for a comic collection being handled in mongodb. It is structured like {comicBookDbTemplate}, produce an update feild to {action} what the user wants to and be sure to make the update field in dot notation"
-            ),
-            HumanMessage(content=task)
-        ]
-    )
+    pydantic_object = FilterAndUpdateForAdd if is_add else FilterAndUpdateForRemove
+    parser = PydanticOutputParser(pydantic_object=pydantic_object)
+    prompt = ChatPromptTemplate.from_template("You are part of an agentic system that handles operations for a comic collection being handled in mongodb. It is structured like {comicBookDbTemplate}, produce an update feild to {action} what the user wants to and be sure to make the update field in dot notation. Task: {task} {format}").partial(action=action, format=parser.get_format_instructions(), comicBookDbTemplate=comicBookDbTemplate)
+    chain = prompt | llm | parser
+    update_and_filter = chain.invoke({"task": task})
     return update_and_filter
 
 

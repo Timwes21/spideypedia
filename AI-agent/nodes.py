@@ -1,12 +1,12 @@
 from langchain_core.messages import HumanMessage, SystemMessage
-from models import State
 from actions import actions
-from llm import(
-    router,
-    get_tasks)
+from llm import router
 from helper_functions import google_search, get_tasks_chain
 from llm import llm
-from models import comicBookDbTemplate
+from models import comicBookDbTemplate, State
+from redis_pub import publish
+
+
 
 
 
@@ -62,7 +62,7 @@ def formulate_response(state: State):
     return {"output": response.content}
 
 
-def comic_collection(state: State):
+async def comic_collection(state: State):
     tasks = get_tasks_chain(state["input"])
     results = {}
     print(tasks)
@@ -72,5 +72,6 @@ def comic_collection(state: State):
         action = current_task["action"]
         result = actions[action](task, state)
         results[action] = result
+        await publish(state['token'])
         
     return {"results": results}
