@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import { comicsBase } from "../../../../routes";
 
 const addRouteApi = comicsBase + "/add-issue"
@@ -28,7 +28,7 @@ export default function AddIssue({titleName, type, character, vol}){
                 
             })
             .then(response=>response.json())
-            .then(data=>{
+            .then(()=>{
                 setButtonPressed(!buttonPressed)
                 setIssueNumber("")
                 setPreview("")

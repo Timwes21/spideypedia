@@ -76,7 +76,6 @@ export default function LoginForm(){
 
 
     const createAccountContent = (
-        <div className="auth-body">
             <div className="create">
                 <h1 className="auth-heading">Create Account</h1>
                 <div className="credentials">
@@ -101,11 +100,9 @@ export default function LoginForm(){
                     <p className="message">Already have an account? <span id="login-link" onClick={() => setCreatingAccount(false) }>Log In</span></p>
                 </div>
             </div>
-        </div>
     )
 
     const loginContent = (
-        <div className="auth-body">
             <div className="login">
                 <h1 className="auth-heading">Login</h1>
                 <div className="credentials">
@@ -122,8 +119,11 @@ export default function LoginForm(){
                     <p className="message">Don't have an Account? <span id="login-link" onClick={ () => setCreatingAccount(true) }>Create Account</span></p>
                 </div>
             </div>
-        </div>
     )
 
-    return creatingAccount? createAccountContent: loginContent;
+    return(
+       <div className="auth-body">
+           {creatingAccount? createAccountContent: loginContent}
+       </div>
+    ) 
 }

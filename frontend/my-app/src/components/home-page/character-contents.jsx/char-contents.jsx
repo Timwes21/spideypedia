@@ -2,7 +2,9 @@ import Titles from "./titles.jsx"
 import { useState } from "react"
 
 export default function CharContents({ charData, visible, character }){
-    const [ titlesVisibility, setTitlesVisibility ] = useState({})
+    const [ titlesVisibility, setTitlesVisibility ] = useState({});
+
+    
 
 
     const toggleVisibility=(type)=>{

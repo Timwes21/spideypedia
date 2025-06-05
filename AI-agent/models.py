@@ -13,6 +13,7 @@ class State(TypedDict):
     filter_key: dict
     update_key: dict
     collection: Any
+    chat: list[dict]
 
 
 class ComicDetails(TypedDict):

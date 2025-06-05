@@ -20,7 +20,7 @@
     box-shadow: 0px 0px 5px black;
     border: 5px solid rgb(0, 4, 78);
     border-radius: 15px;
-    width: 25vw;
+    width: 40%;
 }
 /* .create{
     height: 45vh;
@@ -37,6 +37,7 @@
 }
 .credentials{
     padding: 5px;
+    width: 80%;
 }
 #login-link:hover{
     text-decoration: underline;

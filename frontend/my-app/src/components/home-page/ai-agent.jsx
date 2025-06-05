@@ -38,7 +38,6 @@ export default function Agent(){
 
     function displayMessages(){
         return messages.map((message, index)=>{
-
             const [[key, value]] = Object.entries(message);
             const className = key + "-message" + (index === messages.length-1? " new-message":"");
             console.log(className);

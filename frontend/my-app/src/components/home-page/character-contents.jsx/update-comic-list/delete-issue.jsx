@@ -4,7 +4,7 @@ export function DeleteIssue({character, type, titleName, vol, issueNumber}){
     const [confirm, setConfirm] = useState(false)
 
     const deleteIssue =() => {
-        console.log("char: delete", localStorage.getItem("comicManagementToken"));
+        // console.log("char: delete", localStorage.getItem("comicManagementToken"));
         
         fetch(comicsBase + "/delete-issue", {
             method: "POST",
