@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { submitToAgentWs } from'../../routes.jsx'
+import { submitToAgentWs, undoRoute } from'../../routes.jsx'
 
 
 export default function Agent(){
     const [ input, setInput ] = useState("");
-    const [ agentReply, setAgentReply ] = useState("");
     const [ isOpen, setIsOpen ] = useState(false);
     const [messages, setMessages] = useState([
     ]);
@@ -21,7 +20,13 @@ export default function Agent(){
             console.log(err);
         }
         ws.current.onmessage = (event) =>{
-            addAgentReply(event.data)
+            console.log(typeof event.data);
+            
+            const data = JSON.parse(event.data);
+            console.log(data);
+            data.loading && setMessages(prev=>[...prev, {"agent": data.loading}])
+            localStorage.setItem("start", data.start)
+            setMessages(prev=>[...prev, {"agent": data.output}])
         }
 
         return () => {
@@ -45,17 +50,23 @@ export default function Agent(){
         })
     }
 
-    function addAgentReply(message){
-        setMessages(prev=>[...prev, {"agent": message}])
-    }
 
     const send = () =>{
         ws.current.send(JSON.stringify({
                 token: localStorage.getItem("comicManagementToken"),
-                input: input
+                input: input,
+                start: localStorage.getItem("start") | 0
             }));
         setMessages(prev=>[...prev, {"user": input}]);
         setInput("");
+    }
+
+    const undo = () => {
+        fetch(undoRoute, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({token: localStorage.getItem("comicManagementToken")})
+        })
     }
 
 
@@ -71,6 +82,7 @@ export default function Agent(){
                     {displayMessages()}
                 </div>
                 <div className="user-reply">
+                    <button onClick={undo}>Undo</button>
                     <input value={input} onChange={(e)=>setInput(e.target.value)} type="text" />
                     <button onClick={send}>Send</button>
                 </div>

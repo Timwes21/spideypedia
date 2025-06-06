@@ -11,56 +11,75 @@ from pydantic import BaseModel
 from typing_extensions import Literal
 import json
 import os
+from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
+
+
+
 
 load_dotenv()
 
-api_key = os.environ['API_KEY']
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
+# api_key = os.environ['API_KEY']
+# llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
+
+# image = f"data:image/jpeg;base64,{image_data}"
+# message = HumanMessage(
+#     content=[
+#         {
+#             "type": "text",
+#             "text": "What's in this image?",
+#         },
+#         {"type": "image_url", "image_url": "https://picsum.photos/seed/picsum/200/300"},
+#     ],
+#     tools=[GenAITool(google_search={})],  
+# )
+# result = llm.invoke([message])
+# print(result.content)
+
+characters = {
+    "Spider-man": {
+      "Series": {
+        "Amazing Spider-man": {
+          "vol 1": {
+            "1": {
+              "issueRundown": {
+                "Artist": "Steve Ditko",
+                "Publication Date": "March 1963",
+                "Story Arc": "N/A",
+                "First Appearances": "J. Jonah Jameson, John Jameson, Chameleon",
+                "Writer": "Stan Lee",
+                "Crossovers": "First meeting between Spider-Man and the Fantastic Four",
+                "Name": "Spider-Man: Freak! Public Menace! ; The Chameleon Strikes!"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+# def delete_issue_descriptions(doc):
+#     print(type(doc))
+#     if "issueRundown" in doc:
+#         del doc["issueRundown"]
+#     elif isinstance(doc, dict):
+#         print(True)
+#         return 
+#     return doc    
 
 
-class ConvoState(BaseModel):
-    convo_status: Literal["Ended", "Ongoing"]
-
-chat = []
-import redis
-import time
-import os
-from dotenv import load_dotenv
-load_dotenv()
-# host = os.environ['REDIS_LOCAL_HOST']
-# port = os.environ['REDIS_PORT']
-
-
-# r = redis.Redis(host=host, port=port, decode_responses=True)
-
-token = "token"
-key = f"{token}:chat_timer"
-start = time.time()
+new_dict = {}
 
 
 
-    
+for character_name, character_contents in characters.items():
+    if character_name not in new_dict:
+        new_dict[character_name] = {}
+    for title_type, titles in character_contents.items():
+        if title_type not in new_dict[character_name]:
+            new_dict[character_name][title_type] = {}
+        for title_name, n in titles.items(): 
+            new_dict[character_name][title_type][title_name]={}
 
-# while True:
-#     # if time.time() - start > 3600: 
-#     user_input = input("You: ")
-#     chat += [{"role": "user", "content": user_input}]
-#     result = llm.invoke(chat)
-#     chat += [{"role": "assistant", "content": result.content}]
-#     print(result.content)
-#     print(chat)
-#     parser = PydanticOutputParser(pydantic_object=ConvoState)
-#     prompt = ChatPromptTemplate.from_template("Ananlyze this convo and tell me if if looks like the convo is ongoing or it has ended {convo} {format} ").partial(format=parser.get_format_instructions())
-#     chain = prompt | llm | parser
-#     result = chain.invoke({"convo": json.dumps(chat)})
-#     if result.convo_status is "Ended":
-#         r.hset(key, start)
-        
-    
-#     print(result)
+            
+                
 
-
-example = {"one", "number", "bee", "insect"}
-
-if "one" in example:
-    print(True)
+print(new_dict)

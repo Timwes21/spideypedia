@@ -27,8 +27,7 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
         formData.append('characterData', JSON.stringify({
             character: character, 
             type: type, 
-            titleName: 
-            titleName, 
+            titleName: titleName, 
             vol: vol, 
             issueNumber: issueNumber
         }));

@@ -5,6 +5,7 @@ from helper_functions import google_search, get_tasks_chain
 from llm import llm
 from models import comicBookDbTemplate, State
 from redis_pub import publish
+import time
 
 
 
@@ -64,14 +65,20 @@ def formulate_response(state: State):
 
 async def comic_collection(state: State):
     tasks = get_tasks_chain(state["input"])
+    token = state["token"]
     results = {}
     print(tasks)
+    
+    collection = state["collection"]
+    state_before_update = collection.find_one({"tokens": token}, {"_id": 0, "characters": 1}) 
+    collection.update_one({"tokens": token}, {"$set": {"previous characters": state_before_update}})
     
     for current_task in tasks.tasks:
         task = current_task["task"]
         action = current_task["action"]
         result = actions[action](task, state)
         results[action] = result
-        await publish(state['token'])
+        print(type(token))
+        await publish(token)
         
     return {"results": results}
