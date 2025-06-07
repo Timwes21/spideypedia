@@ -13,8 +13,9 @@ from google.ai.generativelanguage_v1beta.types import Tool as GenAITool
 
 
 
-class AgeOfQueen(BaseModel):
+class Queen(BaseModel):
     age: int = Field(description="the age of the queen of england")
+    place_of_birth: str = Field(description="the queens birthplace")
 
 
 load_dotenv()
@@ -22,19 +23,6 @@ load_dotenv()
 api_key = os.environ['API_KEY']
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
 
-# image = f"data:image/jpeg;base64,{image_data}"
-# message = HumanMessage(
-#     content=[
-#         {
-#             "type": "text",
-#             "text": "What's in this image?",
-#         },
-#         {"type": "image_url", "image_url": "https://picsum.photos/seed/picsum/200/300"},
-#     ],
-#     tools=[GenAITool(google_search={})],  
-# )
-# result = llm.invoke([message])
-# print(result.content)
 
 characters = {
     "Spider-man": {
@@ -57,25 +45,32 @@ characters = {
       }
     }
   }
-# def delete_issue_descriptions(doc):
-#     print(type(doc))
-#     if "issueRundown" in doc:
-#         del doc["issueRundown"]
-#     elif isinstance(doc, dict):
-#         print(True)
-#         return 
-#     return doc    
 
 
-message = HumanMessage(
+parser = PydanticOutputParser(pydantic_object=Queen)
+system_message = SystemMessage(
         content=[
             {
                 "type": "text",
-                "text": "how old is the queen of engalnd, (can you confirm if you are using googlesearch or other otuside reults i am tesing a prompt style using google search from gemini)",
+                "text": "answer the users question with google search tool grounding the asnwer",
             }
         ],
     )
     
-res = llm.invoke([message], tools=[GenAITool(google_search={})])
 
-print(res)
+message = HumanMessage(
+    content=[
+        {"type": "text", "text": f"how old is the queen of engalnd, and where was she born {parser.get_format_instructions()}"}
+    ]
+)
+
+res = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
+print(type(res.content))
+print(res.content)
+
+
+parsed_res = parser.parse(res.content)
+
+print(type(parsed_res))
+print(parsed_res)
+print(parsed_res.age)

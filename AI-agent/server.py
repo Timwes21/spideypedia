@@ -104,9 +104,10 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
         content=[
             {"type": "text",
             "text": f"You are being used in a mobile app that handles tracking the users comic collection. The collection is stored in mondodb with this strutcure: {comicBookDbTemplate}, and this is the necessary details of the users current collection: {new_dict}"},
+            {"type":"text",
+            "text": "Now since successfully adding to mongodb take specificity, when returning the title and character name, be sure the grammar matches the title and charcatrs name in the users mongodb collection if it exists, otherwise it will be added under a new character and/or title section"},            
             {"type": "text",
             "text": f"in json format give me the info like this: {parser.get_format_instructions()}"}
-            
         ]
     )
     
@@ -121,6 +122,8 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     
     
     formatted_results = parser.parse(result.content)
+    
+    
 
     
     print(formatted_results)
