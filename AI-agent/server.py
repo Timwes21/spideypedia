@@ -8,6 +8,8 @@ import base64
 from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
 from langchain_core.messages import HumanMessage, SystemMessage
 from llm import llm
+from models import comicBookDbTemplate, PhotoUploadInfo
+from langchain.output_parsers import PydanticOutputParser
 
 
 
@@ -96,27 +98,32 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
                 new_dict[character_name][title_type][title_name]={}
 
             
-        
+    parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
+    
+    system_message = SystemMessage(
+        content=[
+            {"type": "text",
+            "text": f"You are being used in a mobile app that handles tracking the users comic collection. The collection is stored in mondodb with this strutcure: {comicBookDbTemplate}, and this is the necessary details of the users current collection: {new_dict}"},
+            {"type": "text",
+            "text": f"in json format give me the info like this: {parser.get_format_instructions()}"}
+            
+        ]
+    )
     
     
     message = HumanMessage(
         content=[
-            {
-                "type": "text",
-                "text": "can you search the internet to get as much info on this info as you can",
-            },
             {"type": "image_url", "image_url": image_url},
         ],
-        # tools=[GenAITool(google_search={})],  
     )
     
-    result = llm.invoke([message])
+    result = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
     
-    print(result)
     
+    formatted_results = parser.parse(result.content)
 
     
-
+    print(formatted_results)
     
         
         

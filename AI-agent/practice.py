@@ -1,13 +1,11 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from langchain_core.messages import HumanMessage, SystemMessage
 import faiss
 from dotenv import load_dotenv
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing_extensions import Literal
 import json
 import os
@@ -15,11 +13,14 @@ from google.ai.generativelanguage_v1beta.types import Tool as GenAITool
 
 
 
+class AgeOfQueen(BaseModel):
+    age: int = Field(description="the age of the queen of england")
+
 
 load_dotenv()
 
-# api_key = os.environ['API_KEY']
-# llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
+api_key = os.environ['API_KEY']
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
 
 # image = f"data:image/jpeg;base64,{image_data}"
 # message = HumanMessage(
@@ -66,20 +67,15 @@ characters = {
 #     return doc    
 
 
-new_dict = {}
+message = HumanMessage(
+        content=[
+            {
+                "type": "text",
+                "text": "how old is the queen of engalnd, (can you confirm if you are using googlesearch or other otuside reults i am tesing a prompt style using google search from gemini)",
+            }
+        ],
+    )
+    
+res = llm.invoke([message], tools=[GenAITool(google_search={})])
 
-
-
-for character_name, character_contents in characters.items():
-    if character_name not in new_dict:
-        new_dict[character_name] = {}
-    for title_type, titles in character_contents.items():
-        if title_type not in new_dict[character_name]:
-            new_dict[character_name][title_type] = {}
-        for title_name, n in titles.items(): 
-            new_dict[character_name][title_type][title_name]={}
-
-            
-                
-
-print(new_dict)
+print(res)

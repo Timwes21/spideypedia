@@ -35,7 +35,21 @@ class UpdateComics(BaseModel):
     vol: int = Field(description="The volume number of the series")
     issue_number: int = Field(description="Issue number")        
 
-
+class PhotoUploadInfo(BaseModel):
+    name: str = Field(description="include the official name for the story, if there is more than one story in an issue include both names seperated by a ; example the name of the story from Amazing Spider-man issue 5 vol 1 is 'Marked for Destruction by Dr. Doom!' ")
+    artist: str = Field(description="the artist for the issue")
+    writer: str = Field(description="the writer for the issue")
+    first_appearances: Optional[str] = Field(description="any possible first appearances, leave blank if no")
+    major_deaths: Optional[str] = Field(description="any possible major deaths, leave blank if no")
+    costume_changes: Optional[str] = Field(description="any possible costume changes, leave blank if no")
+    story_arc: Optional[str] = Field(description="any possible major story arc, leave blank if no")
+    crossovers : Optional[str] = Field(description="any possible crossovers, leave blank if no")
+    release_date: str = Field(description="the release date of the issue fro example may 2, 1987")
+    character: str = Field(description="Name of the character the title belongs to")
+    title_type: Literal["Series", "Mini-Series", "One-Shot"] = Field(description="type of the title being added to")
+    title: str = Field(description="Name of the title for example Uncanny X-men")
+    vol: int = Field(description="The volume number of the series")
+    issue_number: int = Field(description="Issue number")        
 
 class ClassifyTasks(TypedDict):
     action: Literal["add_general", "remove", "check_collection", "add_comics"]
