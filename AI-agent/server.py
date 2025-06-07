@@ -108,12 +108,14 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     
     result = google_search([system_message, message])
     formatted_results = parser.parse(result.content)
-    issue_rundown = format_comic_details(formatted_results.model_dump())
+    issue_rundown_draft = formatted_results.model_dump()
     
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
     for i in not_issue_rundown_keys:
-        del issue_rundown[i]
+        del issue_rundown_draft[i]
+    
+    issue_rundown = format_comic_details(issue_rundown_draft)
 
             
     character, title = get_char_and_title(formatted_results, token, production_collection)
