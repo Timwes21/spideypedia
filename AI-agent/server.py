@@ -8,7 +8,7 @@ import base64
 from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
 from langchain_core.messages import HumanMessage, SystemMessage
 from llm import llm
-from models import comicBookDbTemplate, PhotoUploadInfo
+from models import comicBookDbTemplate, PhotoUploadInfo, convert_names_for_comic_details
 from langchain.output_parsers import PydanticOutputParser
 
 
@@ -109,13 +109,13 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     
     result = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
     formatted_results = parser.parse(result.content)
-    issue_rundown = formatted_results.model_dump()
+    issue_rundown_draft = formatted_results.model_dump()
     
     
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
     for i in not_issue_rundown_keys:
-        del issue_rundown[i]
+        del issue_rundown_draft[i]
 
     
     character = formatted_results.character
@@ -129,10 +129,12 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
                     title = title_name
     
     
-    issue_rundown_copy = issue_rundown.copy()
-    for key, value in issue_rundown_copy.items():
-        if value == None:
-            del issue_rundown[key]    
+    issue_rundown = {}
+    for key, value in issue_rundown_draft.items():
+        if value != None:
+            new_key = convert_names_for_comic_details[key]
+            issue_rundown[new_key] = value
+            
     
     
     production_collection.update_one(
@@ -141,6 +143,8 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             {f"characters.{character}.{formatted_results.title_type}.{title}.vol {formatted_results.vol}.{formatted_results.issue_number}.issueRundown": issue_rundown}
         }
     )
+    
+    await publish(token)
     
     
     
