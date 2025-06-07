@@ -107,7 +107,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             },
             {"type": "image_url", "image_url": image_url},
         ],
-        tools=[GenAITool(google_search={})],  
+        # tools=[GenAITool(google_search={})],  
     )
     
     result = llm.invoke([message])
