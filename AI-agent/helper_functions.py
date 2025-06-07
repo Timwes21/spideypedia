@@ -27,6 +27,7 @@ def get_filter_and_update_keys(task, label):
 
 def format_comic_details(comic_details):
     formatted_details = {}
+    print(comic_details)
     for key, value in comic_details.items():
         if value != None:
             new_key = convert_names_for_comic_details[key]
