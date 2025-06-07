@@ -13,15 +13,10 @@ import time
 
 def llm_call_router(state: State):
     """Route the input to the appropriate node"""
-
-    decision = router.invoke(
-        [
-            SystemMessage(
-                content=f"The users comic collection has this structure in mongodb:{comicBookDbTemplate} Route the input to trivia, unsure or comic_collection"
-            ),
-            HumanMessage(content=state["input"]),
-        ]
-    )
+    
+    messages = [SystemMessage("You are being used in a comic collectio application, Route the input to trivia, unsure or comic_collection based on the recent input, and previous conversations")]
+    messages += state["chat"]
+    decision = router.invoke(messages)
 
     return {"decision": decision.step}
 

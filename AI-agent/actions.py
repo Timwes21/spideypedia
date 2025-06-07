@@ -10,6 +10,7 @@ from helper_functions import (
     get_update_details, 
     format_comic_details, 
     get_filter_and_update_keys, 
+    get_char_and_title
 )
 
 
@@ -24,10 +25,10 @@ def add_comics(task, state: State):
     search_results = google_search(content)
     comic_details = get_comic_details.invoke(search_results)
     update_details = get_update_details(task)
-    filter_key = {"tokens": state["token"]}
     formatted_details = format_comic_details(comic_details)
-    update_key = {"$set": {f"characters.{update_details.character}.{update_details.title_type}.{update_details.title}.vol {update_details.vol}.{update_details.issue_number}.issueRundown": formatted_details}}
-    result = state['collection'].update_one(filter_key, update_key)
+    character, title = get_char_and_title( update_details, state["token"], state["collection"])
+    update_key = {"$set": {f"characters.{character}.{update_details.title_type}.{title}.vol {update_details.vol}.{update_details.issue_number}.issueRundown": formatted_details}}
+    result = state['collection'].update_one({"tokens": state["token"]}, update_key)
     return result
 
 def add_general(task, state: State):

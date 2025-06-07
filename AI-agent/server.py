@@ -5,11 +5,11 @@ from db import production_collection
 import time
 from redis_pub import publish
 import base64
-from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from llm import llm
-from models import comicBookDbTemplate, PhotoUploadInfo, convert_names_for_comic_details
+from models import PhotoUploadInfo, convert_names_for_comic_details
 from langchain.output_parsers import PydanticOutputParser
+from helper_functions import format_comic_details, get_char_and_title, google_search
 
 
 
@@ -56,11 +56,11 @@ async def talk_to_agent(ws: WebSocket):
             token = data['token']
             user_input = data['input']
             chat = get_chat(token, float(start))
-            chat += [{"role": "user", "content": user_input}]
+            chat += [ HumanMessage(user_input)]
             await ws.send_json({"loading": "forming response"})
             state = await router_workflow.ainvoke({"input": user_input, "token": token, "collection": production_collection, "chat": chat})
             output = state['output']
-            chat += [{"role": "assistant", "content": output}]
+            chat += [AIMessage(output)]
             while len(chat) > 10:
                 chat.pop(0) 
             chats[token] = chat
@@ -84,9 +84,6 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     mime_type = file.content_type
     image_url = f"data:{mime_type};base64,{encoded}"
     
-    characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
-    characters = characters['characters']
-            
     parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
     
     system_message = SystemMessage(
@@ -107,35 +104,19 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
         ],
     )
     
-    result = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
-    formatted_results = parser.parse(result.content)
-    issue_rundown_draft = formatted_results.model_dump()
     
+    
+    result = google_search([system_message, message])
+    formatted_results = parser.parse(result.content)
+    issue_rundown = format_comic_details(formatted_results.model_dump())
     
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
     for i in not_issue_rundown_keys:
-        del issue_rundown_draft[i]
+        del issue_rundown[i]
 
-    
-    character = formatted_results.character
-    title = formatted_results.title
-    
-    for character_name, character_contents in characters.items():
-        if character_name.lower() == character.lower():
-            character = character_name
-            for title_name in character_contents[formatted_results.title_type].keys(): 
-                if title_name.lower() == title.lower():
-                    title = title_name
-    
-    
-    issue_rundown = {}
-    for key, value in issue_rundown_draft.items():
-        if value != None:
-            new_key = convert_names_for_comic_details[key]
-            issue_rundown[new_key] = value
             
-    
+    character, title = get_char_and_title(formatted_results, token, production_collection)
     
     production_collection.update_one(
         {"tokens": token}, 
