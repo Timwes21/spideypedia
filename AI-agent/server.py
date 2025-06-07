@@ -82,7 +82,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     contents = await file.read()
     encoded = base64.b64encode(contents).decode('utf-8')
     mime_type = file.content_type
-    
+    print("token: ", token)
     image_url = f"data:{mime_type};base64,{encoded}"
     
     characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
