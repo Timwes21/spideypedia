@@ -79,23 +79,21 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     contents = await file.read()
     
     encoded = base64.b64encode(contents).decode('utf-8')
-    
-    
     mime_type = file.content_type
     
     image_url = f"data:{mime_type};base64,{encoded}"
-    # characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
-    # characters = characters['characters']
-    # new_dict = {}    
+    characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
+    characters = characters['characters']
+    new_dict = {}    
     
-    # for character_name, character_contents in characters.items():
-    #     if character_name not in new_dict:
-    #         new_dict[character_name] = {}
-    #     for title_type, titles in character_contents.items():
-    #         if title_type not in new_dict[character_name]:
-    #             new_dict[character_name][title_type] = {}
-    #         for title_name, n in titles.items(): 
-    #             new_dict[character_name][title_type][title_name]={}
+    for character_name, character_contents in characters.items():
+        if character_name not in new_dict:
+            new_dict[character_name] = {}
+        for title_type, titles in character_contents.items():
+            if title_type not in new_dict[character_name]:
+                new_dict[character_name][title_type] = {}
+            for title_name, n in titles.items(): 
+                new_dict[character_name][title_type][title_name]={}
 
             
         
@@ -112,7 +110,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
         tools=[GenAITool(google_search={})],  
     )
     
-    result = llm.invoke(message)
+    result = llm.invoke([message])
     
     print(result)
     
