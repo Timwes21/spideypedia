@@ -64,3 +64,64 @@ def get_tasks_chain(user_input):
     chain = prompt | llm | parser
     return chain.invoke({"user_input": user_input})
 
+
+
+def add_by_photo(image_url, production_collection, token):
+    characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
+    characters = characters['characters']
+    new_dict = {}    
+    
+    for character_name, character_contents in characters.items():
+        if character_name not in new_dict:
+            new_dict[character_name] = {}
+        for title_type, titles in character_contents.items():
+            if title_type not in new_dict[character_name]:
+                new_dict[character_name][title_type] = {}
+            for title_name, n in titles.items(): 
+                new_dict[character_name][title_type][title_name]={}
+            
+    parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
+    
+    system_message = SystemMessage(
+        content=[
+            {"type": "text",
+            "text": "You are being used in a mobile app that handles tracking the users comic collection, return the necessary data for it to be added"},
+            {"type":"text",
+            "text": "Now since successfully adding to mongodb take specificity, when returning the title and character name, be sure the grammar matches the title and charcatrs name in the users mongodb collection if it exists, otherwise it will be added under a new character and/or title section. For example Spider-Man is normally typed as Spider-man but if in the necessary info about the users collection, it is 'Spiderman you make the character Spiderman'"},
+            {"type": "text",
+            "text": f"in json format give me the info like this: {parser.get_format_instructions()}"}
+        ]
+    )
+    
+    
+    message = HumanMessage(
+        content=[
+            {"type": "image_url", "image_url": image_url},
+        ],
+    )
+    
+    result = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
+    
+    formatted_results = parser.parse(result.content)
+    
+        
+
+    
+    name = formatted_results.name
+    artist = formatted_results.artist
+    writer = formatted_results.writer
+    first_appearances = formatted_results.first_appearances
+    major_deaths = formatted_results.major_deaths
+    costume_changes = formatted_results.costume_changes
+    story_arc = formatted_results.story_arc
+    crossovers = formatted_results.crossovers
+    release_date = formatted_results.release_date
+    character = formatted_results.character
+    title_type = formatted_results.title_type
+    title = formatted_results.title
+    vol = formatted_results.vol
+    issue_number = formatted_results.issue_number
+    
+    print(formatted_results)
+    
+    production_collection.update_one

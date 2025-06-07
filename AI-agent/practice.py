@@ -64,13 +64,11 @@ message = HumanMessage(
     ]
 )
 
-res = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
-print(type(res.content))
-print(res.content)
+my_dict = {"be": "be", "a": 1}
 
 
-parsed_res = parser.parse(res.content)
-
-print(type(parsed_res))
-print(parsed_res)
-print(parsed_res.age)
+for i, j in my_dict.items():
+    if j == "be":
+        del my_dict[i]
+        
+print(my_dict)

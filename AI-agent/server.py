@@ -13,6 +13,7 @@ from langchain.output_parsers import PydanticOutputParser
 
 
 
+
 app = FastAPI()
 
 origins = [
@@ -79,33 +80,22 @@ async def undo_recent(req: Request):
 @app.post("/add-by-photo")
 async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     contents = await file.read()
-    
     encoded = base64.b64encode(contents).decode('utf-8')
     mime_type = file.content_type
     
     image_url = f"data:{mime_type};base64,{encoded}"
+    
     characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
     characters = characters['characters']
-    new_dict = {}    
-    
-    for character_name, character_contents in characters.items():
-        if character_name not in new_dict:
-            new_dict[character_name] = {}
-        for title_type, titles in character_contents.items():
-            if title_type not in new_dict[character_name]:
-                new_dict[character_name][title_type] = {}
-            for title_name, n in titles.items(): 
-                new_dict[character_name][title_type][title_name]={}
-
             
     parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
     
     system_message = SystemMessage(
         content=[
             {"type": "text",
-            "text": f"You are being used in a mobile app that handles tracking the users comic collection, and this is the necessary details of the users current collection: {new_dict}"},
+            "text": "You are being used in a mobile app that handles tracking the users comic collection, return the necessary data for it to be added"},
             {"type":"text",
-            "text": "Now since successfully adding to mongodb take specificity, when returning the title and character name, be sure the grammar matches the title and charcatrs name in the users mongodb collection if it exists, otherwise it will be added under a new character and/or title section"},
+            "text": "Now since successfully adding to mongodb take specificity, when returning the title and character name, be sure the grammar matches the title and charcatrs name in the users mongodb collection if it exists, otherwise it will be added under a new character and/or title section. For example Spider-Man is normally typed as Spider-man but if in the necessary info about the users collection, it is 'Spiderman you make the character Spiderman'"},
             {"type": "text",
             "text": f"in json format give me the info like this: {parser.get_format_instructions()}"}
         ]
@@ -119,18 +109,42 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     )
     
     result = llm.invoke([system_message, message], tools=[GenAITool(google_search={})])
-    
-    
     formatted_results = parser.parse(result.content)
+    issue_rundown = formatted_results.model_dump()
     
     
+    not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
+
+    for i in not_issue_rundown_keys:
+        del issue_rundown[i]
 
     
-    print(formatted_results)
+    character = formatted_results.character
+    title = formatted_results.title
     
-        
-        
-        
+    for character_name, character_contents in characters.items():
+        if character_name.lower() == character.lower():
+            character = character_name
+            for title_name in character_contents[formatted_results.title_type].keys(): 
+                if title_name.lower() == title.lower():
+                    title = title_name
+    
+    
+    issue_rundown_copy = issue_rundown
+    for key, value in issue_rundown_copy.items():
+        if value == None:
+            del issue_rundown[key]    
+    
+    
+    production_collection.update_one(
+        {"tokens": token}, 
+        {"$set": 
+            {f"characters.{character}.{formatted_results.title_type}.{title}.vol {formatted_results.vol}.{formatted_results.issue_number}.issueRundown": issue_rundown}
+        }
+    )
+    
+    
+    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app)
