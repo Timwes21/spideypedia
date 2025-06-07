@@ -82,7 +82,6 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     contents = await file.read()
     encoded = base64.b64encode(contents).decode('utf-8')
     mime_type = file.content_type
-    print("token: ", token)
     image_url = f"data:{mime_type};base64,{encoded}"
     
     characters: dict = production_collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
@@ -130,7 +129,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
                     title = title_name
     
     
-    issue_rundown_copy = issue_rundown
+    issue_rundown_copy = issue_rundown.copy()
     for key, value in issue_rundown_copy.items():
         if value == None:
             del issue_rundown[key]    
