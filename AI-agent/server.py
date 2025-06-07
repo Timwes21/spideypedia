@@ -103,7 +103,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
         content=[
             {
                 "type": "text",
-                "text": "Try to get the name of the artist writer, vol and description of this comic issue",
+                "text": "can you search the internet to get as much info on this info as you can",
             },
             {"type": "image_url", "image_url": image_url},
         ],
