@@ -1,4 +1,5 @@
-from models import State, issueRundownTemplate
+from models import State, issueRundownTemplate, ComicDetails
+from langchain.output_parsers import PydanticOutputParser
 
 from llm import(
     get_comic_details,
@@ -6,7 +7,7 @@ from llm import(
 )
 
 from helper_functions import (
-    google_search, 
+    google_search_with_filter, 
     get_update_details, 
     format_comic_details, 
     get_filter_and_update_keys, 
@@ -21,11 +22,12 @@ def check_collection(task, state: State):
 
 
 def add_comics(task, state: State):
-    content = f"fill out this template: {issueRundownTemplate} about for the issue that the user wants to add, user input: " + task  
-    search_results = google_search(content)
-    comic_details = get_comic_details.invoke(search_results)
+    parser = PydanticOutputParser(pydantic_object=ComicDetails)
+    content = f"fill out this template: {issueRundownTemplate} about for the issue that the user wants to add, user input: {task} {parser.get_format_instructions()} "
+    comic_details = google_search_with_filter(content, parser)
+    print("comic details: ", comic_details)
     update_details = get_update_details(task)
-    formatted_details = format_comic_details(comic_details)
+    formatted_details = format_comic_details(comic_details.model_dump())
     character, title = get_char_and_title( update_details, state["token"], state["collection"])
     update_key = {"$set": {f"characters.{character}.{update_details.title_type}.{title}.vol {update_details.vol}.{update_details.issue_number}.issueRundown": formatted_details}}
     result = state['collection'].update_one({"tokens": state["token"]}, update_key)

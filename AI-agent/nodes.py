@@ -17,6 +17,7 @@ def llm_call_router(state: State):
     messages = [SystemMessage("You are being used in a comic collectio application, Route the input to trivia, unsure or comic_collection based on the recent input, and previous conversations")]
     messages += state["chat"]
     decision = router.invoke(messages)
+    print(decision)
 
     return {"decision": decision.step}
 
@@ -41,6 +42,7 @@ def unsure(state: State):
 def trivia(state: State):
     content = "You are a comic expert and you need to anwser the users question: " + state["input"]
     result = google_search(content)
+    print(type(result))
     return {"output": result}
         
 

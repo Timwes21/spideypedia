@@ -84,9 +84,9 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     mime_type = file.content_type
     image_url = f"data:{mime_type};base64,{encoded}"
     
-    parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
     
-    system_message = SystemMessage(
+    parser = PydanticOutputParser(pydantic_object=PhotoUploadInfo)
+    messages = [SystemMessage(
         content=[
             {"type": "text",
             "text": "You are being used in a mobile app that handles tracking the users comic collection, return the necessary data for it to be added"},
@@ -95,29 +95,20 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             {"type": "text",
             "text": f"in json format give me the info like this: {parser.get_format_instructions()}"}
         ]
-    )
+        ), HumanMessage(
+            content=[
+                {"type": "image_url", "image_url": image_url},
+            ],
+    )]
     
-    
-    message = HumanMessage(
-        content=[
-            {"type": "image_url", "image_url": image_url},
-        ],
-    )
-    
-    
-    
-    result = google_search([system_message, message])
-    formatted_results = parser.parse(result.content)
+    formatted_results = google_search(messages, parser)
     issue_rundown_draft = formatted_results.model_dump()
-    
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
     for i in not_issue_rundown_keys:
         del issue_rundown_draft[i]
     
-    issue_rundown = format_comic_details(issue_rundown_draft)
-
-            
+    issue_rundown = format_comic_details(issue_rundown_draft)            
     character, title = get_char_and_title(formatted_results, token, production_collection)
     
     production_collection.update_one(

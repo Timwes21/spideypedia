@@ -10,6 +10,7 @@ from nodes import (
     comic_collection
 )
 import pytest
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
 from db import practice_collection
 
@@ -17,7 +18,8 @@ from db import practice_collection
 list_of_actions = ["trivia", "comic_collection", "unsure"]
 
 def test_llm_call_router():
-    result = llm_call_router({"input": "add amazing spiderman issue 1"})
+    messages = [AIMessage("how are you"), HumanMessage("i am well thank you for asking"), AIMessage("ok let me know if you need anything"), HumanMessage("Can you tell me when the queen died")]
+    result = llm_call_router({"input": "add amazing spiderman issue 1", "chat": messages})
     assert result['decision'] in list_of_actions
     
 def test_route_decision():

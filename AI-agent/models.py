@@ -16,7 +16,7 @@ class State(TypedDict):
     chat: list[dict]
 
 
-class ComicDetails(TypedDict):
+class ComicDetails(BaseModel):
     name: str = Field(description="include the official name for the story, if there is more than one story in an issue include both names seperated by a ; example the name of the story from Amazing Spider-man issue 5 vol 1 is 'Marked for Destruction by Dr. Doom!' ")
     artist: str = Field(description="the artist for the issue")
     writer: str = Field(description="the writer for the issue")
