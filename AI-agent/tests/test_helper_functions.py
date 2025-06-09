@@ -29,12 +29,7 @@ def test_comic_details():
         assert i in convert_names_for_comic_details.values()
         
 def test_get_update_details():
-    content = f"fill out this template: {issueRundownTemplate} about for the issue that the user wants to add, user input: add amazing spider-man issue 1"
-    google_result = google_search(content)
-    print(type(google_result))
     details_results = get_update_details("add amazing spiderman issue 1")
-    print(type(details_results))
-    assert isinstance(google_result, list)
     assert isinstance(details_results, UpdateComics) 
     
 def test_get_tasks_chain():

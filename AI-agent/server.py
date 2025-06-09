@@ -9,7 +9,7 @@ from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from llm import llm
 from models import PhotoUploadInfo, convert_names_for_comic_details
 from langchain.output_parsers import PydanticOutputParser
-from helper_functions import format_comic_details, get_char_and_title, google_search
+from helper_functions import format_comic_details, get_char_and_title, google_search_with_filter
 
 
 
@@ -101,7 +101,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             ],
     )]
     
-    formatted_results = google_search(messages, parser)
+    formatted_results = google_search_with_filter(messages, parser)
     issue_rundown_draft = formatted_results.model_dump()
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
