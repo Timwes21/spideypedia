@@ -3,7 +3,7 @@ const base = developing?"http://localhost:3000":"https://spideypedia-production.
 const wsLink = developing?"ws://localhost:3000":"wss://spideypedia-production.up.railway.app";
 const comicsBase = base + "/comics";
 const authBase = base + "/auth";
-const undoRoute = "http://127.0.0.1:8000/undo"
+const undoRoute = developing? "http://127.0.0.1:8000/undo": "https://intuitive-smile-production.up.railway.app/undo";
 const submitToAgentWs = developing?"ws://127.0.0.1:8000/ws":"wss://intuitive-smile-production.up.railway.app/ws";
 
 

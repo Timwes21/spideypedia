@@ -17,6 +17,8 @@ const issueTemplate = {
 
 
 async function addCharacter(data, collection){
+    console.log(data);
+    
     const {token, character} = data;
     const characterKey = `characters.${character}`;
     

@@ -1,21 +1,34 @@
 from langchain_core.messages import HumanMessage, SystemMessage
 from actions import actions
-from llm import router
+from llm import router, llm
 from helper_functions import google_search, get_tasks_chain
-from llm import llm
-from models import comicBookDbTemplate, State
+from models import State, CurrentMessages
 from redis_pub import publish
-import time
+from langchain.output_parsers import PydanticOutputParser
 
 
 
 
+
+
+
+def analyze_convo(state: State):
+    print("*******************************************analyze_convo**********************************************")
+    parser = PydanticOutputParser(pydantic_object=CurrentMessages)
+    messages = SystemMessage(f"You are in charge of anayzing the entire chat saved and getting the messages pertaining to the current conversation. Get every message that pertains to the most recent convesation,  {parser.get_format_instructions()}")
+    messages += state["chat"]
+    print(messages.messages)
+    result = llm.invoke(messages.messages)
+    parsed_result = parser.parse(result.content)
+    print("parsed results: ", parsed_result)
+    return {"chat": parsed_result.messages}
 
 def llm_call_router(state: State):
     """Route the input to the appropriate node"""
-    
+    print("*******************************************llm_call_router**********************************************")
     messages = [SystemMessage("You are being used in a comic collectio application, Route the input to trivia, unsure or comic_collection based on the recent input, and previous conversations")]
     messages += state["chat"]
+    
     decision = router.invoke(messages)
     print(decision)
 
@@ -30,6 +43,7 @@ def route_decision(state: State):
     
 
 def unsure(state: State):
+    print("*******************************************unsure**********************************************")
     output = llm.invoke([
             SystemMessage(
                 content=f"You are part of an agentic system that helps with the users comic tracking with the help of mongodb, and a comic book expert, the user has given a response that is uncertain of what they want, form a short response"
@@ -37,16 +51,19 @@ def unsure(state: State):
             HumanMessage(content=state['input'])
         ]
     )
+    print(output.content)
     return {"output": output.content}
 
 def trivia(state: State):
+    print("*******************************************trivia**********************************************")
     content = "You are a comic expert and you need to anwser the users question: " + state["input"]
     result = google_search(content)
-    print(type(result))
+    print(result)
     return {"output": result}
         
 
 def formulate_response(state: State):
+    print("***************************************formulate_response**************************************")
     results = state["results"]
     user_input = state["input"]
     response = llm.invoke([
@@ -61,6 +78,7 @@ def formulate_response(state: State):
 
 
 async def comic_collection(state: State):
+    print("*************************************comic_collection*****************************************")
     tasks = get_tasks_chain(state["input"])
     token = state["token"]
     results = {}
@@ -75,7 +93,6 @@ async def comic_collection(state: State):
         action = current_task["action"]
         result = actions[action](task, state)
         results[action] = result
-        print(type(token))
         await publish(token)
         
     return {"results": results}

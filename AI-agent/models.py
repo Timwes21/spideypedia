@@ -1,6 +1,6 @@
-from typing_extensions import Literal, Optional, Any
+from typing_extensions import Literal, Optional, Any, TypedDict, Union
 from pydantic import BaseModel, Field
-from typing_extensions import TypedDict
+from langchain_core.messages import HumanMessage, AIMessage
 
 
 class State(TypedDict):
@@ -32,7 +32,7 @@ class UpdateComics(BaseModel):
     character: str = Field(description="Name of the character the title belongs to")
     title_type: Literal["Series", "Mini-Series", "One-Shot"] = Field(description="type of the title being added to")
     title: str = Field(description="Name of the title for example Uncanny X-men")
-    vol: int = Field(description="The volume number of the series")
+    vol: int = Field(description="The volume number of the series", examples=["1", "2"])
     issue_number: int = Field(description="Issue number")        
 
 class PhotoUploadInfo(BaseModel):
@@ -77,7 +77,13 @@ class FilterAndUpdateForRemove(BaseModel):
 class Aggregates(BaseModel):
     aggregates: list[dict] = Field(description="an array of aggregates for the mongodb database")    
     
-
+class Message(BaseModel):
+    role: str
+    content: str = Field(description="the message")
+    
+class CurrentMessages(BaseModel):
+    messages: list[Union[AIMessage, HumanMessage]]
+    
 
 issueRundownTemplate ={
         "name": "include the official name for the story, if there is more than one story in an issue inlcude both names seperated by a ; example the name of the story from amazing spiderman issue 5 vol 1 is 'Marked for Destruction by Dr. Doom!' ",

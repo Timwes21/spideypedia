@@ -29,7 +29,7 @@ export default function LoginForm(){
             const data = await response.json();
             if (status === 200){
                 console.log(data.message);
-                localStorage.setItem("comicManagementToken", JSON.stringify(data.token));
+                localStorage.setItem("comicManagementToken", data.token);
                 window.location.reload();
             }
             return data.message;

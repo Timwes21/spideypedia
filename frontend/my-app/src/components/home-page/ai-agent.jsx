@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { submitToAgentWs, undoRoute } from'../../routes.jsx'
 
 
+
 export default function Agent(){
     const [ input, setInput ] = useState("");
     const [ isOpen, setIsOpen ] = useState(false);
@@ -23,7 +24,6 @@ export default function Agent(){
             console.log(typeof event.data);
             
             const data = JSON.parse(event.data);
-            console.log(data);
             data.loading && setMessages(prev=>[...prev, {"agent": data.loading}])
             localStorage.setItem("start", data.start)
             setMessages(prev=>[...prev, {"agent": data.output}])
@@ -39,13 +39,13 @@ export default function Agent(){
 
 
 
+
     
 
     function displayMessages(){
         return messages.map((message, index)=>{
             const [[key, value]] = Object.entries(message);
             const className = key + "-message" + (index === messages.length-1? " new-message":"");
-            console.log(className);
             return <span className={className}>{value}</span>
         })
     }

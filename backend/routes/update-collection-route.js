@@ -1,7 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 const storage = multer.memoryStorage()
-import { withDecryptToken } from '../db/token-handler.js';
 
 
 function comicsRouter(updateCollectionRouteHandler, publish, collection){
@@ -9,7 +8,7 @@ function comicsRouter(updateCollectionRouteHandler, publish, collection){
     const router = express.Router();
     router.post("/:key", upload.single("image"), async(req, res)=>{
         const data = req.body;
-        console.log("body her: ", data);
+        console.log(data);
         
         
         const { key } = req.params;

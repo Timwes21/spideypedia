@@ -43,7 +43,7 @@ def get_update_details(user_input):
 
 def get_tasks_chain(user_input):
     parser = PydanticOutputParser(pydantic_object=Tasks)
-    prompt = ChatPromptTemplate.from_template("You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue plaese make sure the action is add_comic, if adding anyting else do add_general. The program hinges on the distinction between add_general and add_comics. If removing you can return remove and if asking about the collection return check_collection: {user_input} {format}").partial(format=parser.get_format_instructions())
+    prompt = ChatPromptTemplate.from_template("You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue plaese make sure the action is add_comic, if adding anyting else do add_general. The program hinges on the distinction between add_general and add_comics. If removing you can return remove and if asking about the collection return check_collection, make sure to seperate the users input single task(s).: {user_input} {format}").partial(format=parser.get_format_instructions())
     chain = prompt | llm | parser
     return chain.invoke({"user_input": user_input})
 
@@ -53,11 +53,24 @@ def get_char_and_title(details, token, collection):
     title_type = details.title_type
     characters: dict = collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
     characters = characters['characters']
-    for character_name, character_contents in characters.items():
-        if character_name.lower() == character.lower():
-            character = character_name
-            for title_name in character_contents[title_type].keys(): 
-                if title_name.lower() == title.lower():
-                    title = title_name
+    
+    character_map = {name.lower(): name for name in characters.keys()}
+    
+    
+    title_map = {
+            char_name : {
+                name.lower(): name
+                for name in characters[char_name][title_type].keys()
+            }
+            for char_name in characters.keys() if title_type in characters[char_name]
+        }
+    
+    
+    char_lowered = character.lower()
+    if char_lowered in character_map:
+        character = character_map[char_lowered]
+        title_lowered = title.lower()
+        if title_lowered in title_map[character]:
+            title = title_map[character][title_lowered]
     return (character, title)
 

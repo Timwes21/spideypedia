@@ -13,12 +13,6 @@ from google.ai.generativelanguage_v1beta.types import Tool as GenAITool
 from helper_functions import google_search, get_update_details
 
 
-
-class Queen(BaseModel):
-    age: int = Field(description="the age of the queen of england")
-    place_of_birth: str = Field(description="the queens birthplace")
-
-
 load_dotenv()
 
 api_key = os.environ['API_KEY']
@@ -28,10 +22,11 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", api_key=api_key)
 
 
 
-content = "where was the first battle of ww1 "
-result = google_search(content)
-print(type(result))
 
-result = get_update_details("add amazing spiderman issue 1")
-print(type(result))
+characters = {"spiderman": "hero", "batman": "hero"}
 
+empty = {}
+
+example = {"status": True for _ in empty.keys()}
+
+print(example)

@@ -9,6 +9,12 @@ export default function AddChar(){
     const token = localStorage.getItem("comicManagementToken");
     
     function addCharacter(){
+        console.log("character");
+        console.log(token);
+        
+        console.log(character);
+        console.log("inbetween");
+        
         setVisible(!visible)
         setCharacter("");
         character && fetch(addCharacterApi, {
