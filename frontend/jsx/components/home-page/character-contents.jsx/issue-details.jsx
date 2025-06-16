@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { comicsBase } from "../../../routes.jsx";
+import { comicsBase } from "./../../../../routes.js";
 
 
 export default function IssueDetails({character, type, titleName, vol, issueNumber, issueDetails, visible}){
@@ -133,6 +133,6 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
                 </div>)
     }
     
-    return visible? renderIssueDetails(): <></>;
+    return visible && renderIssueDetails();
 
 }

@@ -38,5 +38,5 @@ router_builder.add_edge("unsure", END)
 
 router_workflow = router_builder.compile()
 
-# graph = router_workflow.get_graph()
-# graph.print_ascii()
+graph = router_workflow.get_graph()
+graph.print_ascii()

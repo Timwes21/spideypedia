@@ -1,4 +1,4 @@
-import { authBase } from "../../routes";
+import { authBase } from "../../../routes.js";
 
 export function NavBar(){
     function logout(){

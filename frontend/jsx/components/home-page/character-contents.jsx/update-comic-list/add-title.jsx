@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { comicsBase } from "../../../../routes";
+import { comicsBase } from "./../../../../../routes.js";
 
 const addTitleApi = comicsBase + "/add-title";
 export default function AddTitle({ character }){

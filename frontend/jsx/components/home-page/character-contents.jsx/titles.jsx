@@ -1,18 +1,10 @@
-import { useState } from "react"
 import Volumes from "./volumes.jsx"
-import AddIssue from "./update-comic-list/add-issue.jsx";
+import useVisibility from "../../../hooks/visibility.jsx";
 
 export default function Titles({ title, visible, type, character }){
+    const [issuesVisibility, toggleVisibility] = useVisibility()
 
-    const [ issuesVisibility, setIssuesVisibility ] = useState({});
     
-
-    const toggleVisibility = (titleName) =>{
-        setIssuesVisibility((prev)=>({
-            ...prev,
-            [titleName]: !prev[titleName]
-        }))
-}
 
     return visible?(
         <div>
