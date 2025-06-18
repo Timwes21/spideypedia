@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { comicsBase } from "./../../../../../routes.js";
+import { comicsBase } from "../../../../../routes.js";
 
 export function DeleteChar({character}){
     const deleteChar = () =>{

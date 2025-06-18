@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { comicsBase } from "./../../../../../routes.js";
+import { comicsBase } from "../../../../../routes.js";
 
 const addTitleApi = comicsBase + "/add-title";
 export default function AddTitle({ character }){
@@ -8,8 +8,6 @@ export default function AddTitle({ character }){
     const [ vol, setVol] = useState();
     const [ buttonPressed, setButtonPressed ] = useState(false);
     
-    
-    console.log(type);
 
     function clearForm(){
         setButtonPressed(false);

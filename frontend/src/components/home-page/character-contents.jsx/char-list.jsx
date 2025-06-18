@@ -17,7 +17,6 @@ export default function CharList(){
                 <>
                     <div key={charName}>
                         <strong
-                        key={charName} 
                         className="char-name" 
                         onClick={()=>toggleVisibility(charName)}>
                             {charName}

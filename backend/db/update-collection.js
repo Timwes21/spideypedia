@@ -58,7 +58,7 @@ async function addIssue(data, collection){
     }
         
     
-    const key = `characters.${character.trim()}.${type.trim()}.${titleName.trim()}.${vol.trim()}.${issueNumber.trim()}`;
+    const key = `characters.${character.trim()}.${type.trim()}.${titleName.trim()}.vol ${vol.trim()}.${issueNumber.trim()}`;
     
     const finalResult = await collection.updateOne(
         {tokens : token},

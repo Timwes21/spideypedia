@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { comicsBase } from "./../../../../routes.js";
+import { comicsBase } from "../../../../routes.js";
 
 
 export default function IssueDetails({character, type, titleName, vol, issueNumber, issueDetails, visible}){

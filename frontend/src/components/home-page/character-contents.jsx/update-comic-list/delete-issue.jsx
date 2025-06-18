@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { comicsBase } from "./../../../../../routes.js"
+import { comicsBase } from "../../../../../routes.js"
 export function DeleteIssue({character, type, titleName, vol, issueNumber}){
     const [confirm, setConfirm] = useState(false)
 
