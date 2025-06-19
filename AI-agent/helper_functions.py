@@ -7,6 +7,8 @@ from models import convert_names_for_comic_details, comicBookDbTemplate
 
 def google_search_with_filter(content, parser):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
+    print(result.content)
+    print(type(result.content))
     return parser.parse(result.content)
     
 def google_search(content):
@@ -43,7 +45,7 @@ def get_update_details(user_input):
 
 def get_tasks_chain(user_input):
     parser = PydanticOutputParser(pydantic_object=Tasks)
-    prompt = ChatPromptTemplate.from_template("You are part of an agentic system, which handles the users comic collection, create a list of tasks based on how many actions the user wants to execute with their collection, if the user is adding a comic issue plaese make sure the action is add_comic, if adding anyting else do add_general. The program hinges on the distinction between add_general and add_comics. If removing you can return remove and if asking about the collection return check_collection, make sure to seperate the users input single task(s).: {user_input} {format}").partial(format=parser.get_format_instructions())
+    prompt = ChatPromptTemplate.from_template("You are part of an agentic system that updates the users comic collection beng handles in mongodb. You are to break down the users request into managable tasks. Each task should have no more than one action, for example adding more than one issue/item at a time, removing more than one issue/item, or checking for one issue/item at a time. This makes sure the database is as precise as possible. Each task will fall under these categories: add_comic for adding only comic issues, add_general for anything that isnt a comic issue, remove for removing anything, and check_collection for checking the users collection. : {user_input} {format}").partial(format=parser.get_format_instructions())
     chain = prompt | llm | parser
     return chain.invoke({"user_input": user_input})
 
