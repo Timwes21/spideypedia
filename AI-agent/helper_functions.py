@@ -4,12 +4,14 @@ from langchain.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from llm import get_update_details_from_llm, llm
 from models import convert_names_for_comic_details, comicBookDbTemplate
+import json
 
 def google_search_with_filter(content, parser):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
     print(result.content)
     print(type(result.content))
-    return parser.parse(result.content)
+    final_result = result.content if isinstance(result.content, str) else result.content[1].split("```")[1].replace("json", "")
+    return parser.parse(final_result)
     
 def google_search(content):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
