@@ -101,7 +101,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             ],
     )]
     
-    formatted_results = google_search_with_filter(messages, parser)
+    formatted_results = google_search_with_filter(messages, PhotoUploadInfo)
     issue_rundown_draft = formatted_results.model_dump()
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 

@@ -24,7 +24,7 @@ def check_collection(task, state: State):
 def add_comics(task, state: State):
     parser = PydanticOutputParser(pydantic_object=ComicDetails)
     content = f"You are an ai agent that gets accurate info about the new issue the user is adding, but befroe the adding agent can add it to the colection, you need to get the required info about the issue the user is adding. Be sure to get the correct character, title type, title, volume, and issue number when researching, user input: {task}, {parser.get_format_instructions()} "
-    comic_details = google_search_with_filter(content, parser)
+    comic_details = google_search_with_filter(content, ComicDetails)
     print("comic details: ", comic_details)
     update_details = get_update_details(task)
     formatted_details = format_comic_details(comic_details.model_dump())
