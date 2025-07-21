@@ -1,6 +1,8 @@
 
 const developing = false;
-const base = developing?"http://localhost:3000":"https://spideypedia-production.up.railway.app";
+const railwayBackend = "https://spideypedia-production.up.railway.app"
+const GCPBackend = "https://spideypedia-backend-263835011934.us-east1.run.app"
+const base = developing?"http://localhost:3000":GCPBackend;
 const wsLink = developing?"ws://localhost:3000":"wss://spideypedia-production.up.railway.app";
 const comicsBase = base + "/comics";
 const authBase = base + "/auth";

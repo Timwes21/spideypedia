@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 app.use(express.json());
 const collection = productionCollection;
-const allowedOrigins = ["http://localhost:5173", "https://spideypedia.com"]
+const allowedOrigins = ["http://localhost:5174", "https://spideypedia.com"]
 
 app.use(cors({
     origin: function (origin, callback) {
