@@ -36,5 +36,6 @@ app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, forget
 app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, collection));
 app.use('/agent', agentRouter(Agent, collection));
 
+const port = process.env.PORT || 8080
 
-server.listen(3000, () => console.log("Comic Log Server running on port 3000"));
+server.listen(port, () => console.log(`Comic Log Server running on port ${port}`));
