@@ -26,6 +26,8 @@ COPY package.json package-lock.json ./
 # Use cache for npm install
 RUN npm ci --omit=dev
 
+env PORT=8080
+
 # Run the application as a non-root user.
 USER node
 
@@ -33,7 +35,7 @@ USER node
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 3000
+EXPOSE 8080
 
 # Run the application.
 CMD node server.js

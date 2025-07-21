@@ -37,4 +37,4 @@ app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, colle
 app.use('/agent', agentRouter(Agent, collection));
 
 
-server.listen(3000, () => console.log("Comic Log Server running on port 3000"));
+server.listen(process.env.PORT, () => console.log("Comic Log Server running on port 3000"));
