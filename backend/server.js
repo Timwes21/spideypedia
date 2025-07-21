@@ -31,8 +31,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-ws(server, getCharacters, redisSub, productionCollection);
-app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, productionCollection));
+ws(server, getCharacters, redisSub, collection);
+app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, collection));
 app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, collection));
 app.use('/agent', agentRouter(Agent, collection));
 
