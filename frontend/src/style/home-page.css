@@ -353,7 +353,7 @@ nav{
   right: 10px;
   bottom: 30px;
   transform: translateX(400px);
-  /* width: 25%; */
+  width: 25%;
   height: 60%;
   transition: .3s ease;
 }
@@ -444,7 +444,7 @@ nav{
   padding: 3px;
   border-radius: 5px;
   border: 1px solid black;
-  max-width: max-content;
+  width: max-content;
   color: black;
   box-shadow: 0px 0px 5px black;
   max-width: 70%;
