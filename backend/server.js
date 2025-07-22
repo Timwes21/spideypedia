@@ -15,8 +15,11 @@ import { publish, redisSub } from './utils/redis.js';
 const app = express();
 const server = http.createServer(app);
 app.use(express.json());
+
+
 const collection = productionCollection;
-const allowedOrigins = ["http://localhost:5174", "https://spideypedia.com"]
+
+const allowedOrigins = ["http://localhost:5174", "https://spideypedia.com", "http://localhost:5173"]
 
 app.use(cors({
     origin: function (origin, callback) {
