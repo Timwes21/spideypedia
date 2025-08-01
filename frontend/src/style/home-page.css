@@ -353,7 +353,7 @@ nav{
   right: 10px;
   bottom: 30px;
   transform: translateX(400px);
-  width: 25%;
+  width: 400px;
   height: 60%;
   transition: .3s ease;
 }
@@ -472,4 +472,10 @@ nav{
 
 .new-message{
   animation: slideIn .3s ease-out;
+}
+#loading-message{
+  background-color: #393939;
+  width: max-content;
+  bottom: 0;
+  position: absolute;
 }

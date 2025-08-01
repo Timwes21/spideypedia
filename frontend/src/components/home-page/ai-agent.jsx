@@ -6,6 +6,7 @@ import { submitToAgentWs, undoRoute } from'../../../routes.js'
 export default function Agent(){
     const [ input, setInput ] = useState("");
     const [ isOpen, setIsOpen ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(false)
     const [messages, setMessages] = useState([
     ]);
 
@@ -27,6 +28,7 @@ export default function Agent(){
             data.loading && setMessages(prev=>[...prev, {"agent": data.loading}])
             localStorage.setItem("start", data.start)
             setMessages(prev=>[...prev, {"agent": data.output}])
+            setIsLoading(false);
         }
 
         return () => {
@@ -59,6 +61,7 @@ export default function Agent(){
             }));
         setMessages(prev=>[...prev, {"user": input}]);
         setInput("");
+        setIsLoading(true);
     }
 
     const undo = () => {
@@ -80,6 +83,7 @@ export default function Agent(){
                 </div>
                 <div className="messages">
                     {displayMessages()}
+                    {isLoading &&<span id="loading-message">loading...</span>}
                 </div>
                 <div className="user-reply">
                     <button onClick={undo}>Undo</button>

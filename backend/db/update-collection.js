@@ -29,7 +29,7 @@ async function addCharacter(data, collection){
 async function addToCharacter(data, collection){
     const { token, characterData } = data;
     const {character, type, name, vol} = characterData
-    const key = `characters.${character}.${type}.${name}.vol ${vol}`;
+    const key = `characters.${character}.${type}.${name}.${vol}`;
     const finalResult = await collection.updateOne({tokens : token},{$set: {[key]: {}}});
     return finalResult;
 }

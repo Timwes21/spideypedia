@@ -58,7 +58,6 @@ async def talk_to_agent(ws: WebSocket):
             chat = get_chat(token, float(start))
             chat += [ HumanMessage(user_input)]
             print(chat)
-            await ws.send_json({"loading": "forming response"})
             state = await router_workflow.ainvoke({"input": user_input, "token": token, "collection": production_collection, "chat": chat})
             output = state['output']
             chat += [AIMessage(output)]
