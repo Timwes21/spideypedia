@@ -29,7 +29,7 @@ async function addCharacter(data, collection){
 async function addToCharacter(data, collection){
     const { token, characterData } = data;
     const {character, type, name, vol} = characterData
-    const key = `characters.${character}.${type}.${name}.${vol}`;
+    const key = `characters.${character}.${type}.${name}.vol ${vol}`;
     const finalResult = await collection.updateOne({tokens : token},{$set: {[key]: {}}});
     return finalResult;
 }
@@ -58,7 +58,7 @@ async function addIssue(data, collection){
     }
         
     
-    const key = `characters.${character.trim()}.${type.trim()}.${titleName.trim()}.vol ${vol.trim()}.${issueNumber.trim()}`;
+    const key = `characters.${character.trim()}.${type.trim()}.${titleName.trim()}.${vol.trim()}.${issueNumber.trim()}`;
     
     const finalResult = await collection.updateOne(
         {tokens : token},
