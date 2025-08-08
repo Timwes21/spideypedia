@@ -1,4 +1,4 @@
-from helper_functions import (
+from utils.helper_functions import (
     google_search,
     get_filter_and_update_keys,
     format_comic_details,

@@ -10,3 +10,7 @@ redis_pub = redis.from_url(url)
 # Publish function
 async def publish(token: str):
     await redis_pub.publish("charUpdates", token)
+
+
+# def get_chat():
+

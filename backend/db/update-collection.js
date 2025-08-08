@@ -27,6 +27,8 @@ async function addCharacter(data, collection){
 }
 
 async function addToCharacter(data, collection){
+    console.log("in addToCharacter \n");
+    
     const { token, characterData } = data;
     const {character, type, name, vol} = characterData
     const key = `characters.${character}.${type}.${name}.vol ${vol}`;
@@ -36,6 +38,8 @@ async function addToCharacter(data, collection){
 
 
 async function addIssue(data, collection){
+    console.log("In add issue \n");
+    
     const {token, issueDetails, path} = data;
     const {character, type, titleName, issueNumber, vol} = JSON.parse(issueDetails)
     
@@ -59,6 +63,8 @@ async function addIssue(data, collection){
         
     
     const key = `characters.${character.trim()}.${type.trim()}.${titleName.trim()}.${vol.trim()}.${issueNumber.trim()}`;
+    console.log("key for adding issue: ", key);
+    
     
     const finalResult = await collection.updateOne(
         {tokens : token},

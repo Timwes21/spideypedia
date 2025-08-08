@@ -14,6 +14,7 @@ class State(TypedDict):
     update_key: dict
     collection: Any
     chat: list[dict]
+    username: str
 
 
 class ComicDetails(BaseModel):
@@ -83,6 +84,10 @@ class Message(BaseModel):
     
 class CurrentMessages(BaseModel):
     messages: list[Union[AIMessage, HumanMessage]]
+
+
+class Username(BaseModel):
+    username: str
     
 
 issueRundownTemplate ={

@@ -1,0 +1,70 @@
+=== Blocking Task Classifications ===
+
+CPU-heavy:
+- math 
+- loops 
+- parsing 
+- transformations
+- encryption 
+- compression
+
+I/O-heavy:
+- network calls 
+- disk reads/writes 
+- database 
+- queries 
+- API requests
+
+
+
+=== How to Handle ===
+
+
+Quick Calls:
+[python]
+import asyncio
+import time
+
+def cpu_heavy_task(x):
+    time.sleep(2)  # Simulate heavy work
+    return x * x
+
+async def main():
+    result = await asyncio.to_thread(cpu_heavy_task, 5)
+    print(result)
+
+asyncio.run(main())
+
+[end]
+Use when:
+- Few calls (1–5)
+- Simpler code preferred
+
+Many Calls:
+[python]
+import asyncio
+import time
+from concurrent.futures import ThreadPoolExecutor
+
+def cpu_heavy_task(x):
+    time.sleep(2)
+    return x * x
+
+async def main():
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        loop = asyncio.get_running_loop()
+        tasks = [
+            loop.run_in_executor(pool, cpu_heavy_task, i)
+            for i in range(10)
+        ]
+        results = await asyncio.gather(*tasks)
+        print(results)
+
+asyncio.run(main())
+[end]
+Use when:
+- Many calls (10+)
+- Need efficiency by reusing threads
+
+Few calls -> asyncio.to_thread()
+Many calls -> ThreadPoolExecutor + run_in_executor()

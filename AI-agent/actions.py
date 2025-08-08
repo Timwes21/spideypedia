@@ -1,12 +1,13 @@
 from models import State, issueRundownTemplate, ComicDetails
 from langchain.output_parsers import PydanticOutputParser
+from langchain_core.tools import tool
 
-from llm import(
+from utils.llm import(
     get_comic_details,
     get_aggregates,
 )
 
-from helper_functions import (
+from utils.helper_functions import (
     google_search_with_filter, 
     get_update_details, 
     format_comic_details, 
@@ -19,7 +20,6 @@ def check_collection(task, state: State):
     aggregates = get_aggregates(task, state)
     result = list(state['collection'].aggregate(aggregates))
     return {"result": result}
-
 
 def add_comics(task, state: State):
     parser = PydanticOutputParser(pydantic_object=ComicDetails)

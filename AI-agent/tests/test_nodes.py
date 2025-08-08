@@ -12,7 +12,7 @@ from nodes import (
 import pytest
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 
-from db import practice_collection
+from utils.db import practice_collection
 
 
 list_of_actions = ["trivia", "comic_collection", "unsure"]

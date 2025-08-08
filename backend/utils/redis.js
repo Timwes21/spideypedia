@@ -7,7 +7,17 @@ redisSub.connect();
 redisPub.connect();
 
 async function publish(token){
-    await redisPub.publish("charUpdates", token);
+    try{
+        await redisPub.publish("charUpdates", token);
+    }
+    catch{
+        console.log("redis timed out");
+        
+    }
 }
 
-export { redisSub, publish };
+function getRedisSub(){
+    return redisSub
+}
+
+export { getRedisSub, publish };

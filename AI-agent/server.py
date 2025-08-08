@@ -1,16 +1,17 @@
 from fastapi import Request, FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from graph import router_workflow
-from db import production_collection
+from utils.db import production_collection
 import time
+import asyncio
 from redis_pub import publish
 import base64
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from llm import llm
+from utils.llm import llm
 from models import PhotoUploadInfo, convert_names_for_comic_details
 from langchain.output_parsers import PydanticOutputParser
-from helper_functions import format_comic_details, get_char_and_title, google_search_with_filter
-
+from utils.helper_functions import format_comic_details, get_char_and_title, google_search_with_filter, get_username
 
 
 
@@ -49,6 +50,7 @@ def get_chat(token, start):
 @app.websocket("/ws")
 async def talk_to_agent(ws: WebSocket):
     await ws.accept()
+    # username = await get_username()
     try: 
         while True:
             data = await ws.receive_json()
@@ -61,8 +63,6 @@ async def talk_to_agent(ws: WebSocket):
             state = await router_workflow.ainvoke({"input": user_input, "token": token, "collection": production_collection, "chat": chat})
             output = state['output']
             chat += [AIMessage(output)]
-            while len(chat) > 10:
-                chat.pop(0) 
             chats[token] = chat
             await ws.send_json({"output": output, "start": time.time()})
             
@@ -101,7 +101,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             ],
     )]
     
-    formatted_results = google_search_with_filter(messages, PhotoUploadInfo)
+    formatted_results: PhotoUploadInfo = google_search_with_filter(messages, PhotoUploadInfo)
     issue_rundown_draft = formatted_results.model_dump()
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 
@@ -119,6 +119,9 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     )
     
     await publish(token)
+
+
+
     
     
     

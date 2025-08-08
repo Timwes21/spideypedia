@@ -1,10 +1,16 @@
 from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
 from models import Tasks, FilterAndUpdateForRemove, FilterAndUpdateForAdd
 from langchain.output_parsers import PydanticOutputParser
+from langchain_core.runnables import Runnable
 from langchain_core.prompts import ChatPromptTemplate
-from llm import get_update_details_from_llm, llm
+from utils.llm import get_update_details_from_llm, llm
 from models import convert_names_for_comic_details, comicBookDbTemplate
+import asyncio
 import json
+from utils.db import production_collection as collection
+
+
+
 
 def google_search_with_filter(content, model):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
@@ -50,15 +56,16 @@ def get_tasks_chain(user_input):
     chain = prompt | llm | parser
     return chain.invoke({"user_input": user_input})
 
-def get_char_and_title(details, token, collection):
+def get_char_and_title(details, token, collection) -> set:
     character = details.character
     title = details.title
     title_type = details.title_type
     characters: dict = collection.find_one({"tokens": token}, {"characters": 1, "_id": 0})
     characters = characters['characters']
+    print("\ncharacters : ", characters, "\n")
     
     character_map = {name.lower(): name for name in characters.keys()}
-    
+
     
     title_map = {
             char_name : {
@@ -68,12 +75,21 @@ def get_char_and_title(details, token, collection):
             for char_name in characters.keys() if title_type in characters[char_name]
         }
     
-    
+    print("Title Map: ", title_map, "\n")
     char_lowered = character.lower()
     if char_lowered in character_map:
         character = character_map[char_lowered]
         title_lowered = title.lower()
-        if title_lowered in title_map[character]:
+        if title_lowered in title_map.get(character, []):
             title = title_map[character][title_lowered]
     return (character, title)
 
+def get_chain(model, prompt) -> Runnable:
+    parser = PydanticOutputParser(pydantic_object=model)
+    prompt = ChatPromptTemplate.from_template(prompt +"{format}").partial(format=parser.get_format_instructions())
+    chain = prompt | llm | parser
+    return chain
+
+async def get_username(token: str):
+    user_info = await asyncio.to_thread(lambda: collection.find_one({"tokens": token}, {"_id": 0, "userInfo": 1}))
+    return user_info["username"]

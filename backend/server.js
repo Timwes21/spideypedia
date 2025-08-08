@@ -10,7 +10,7 @@ import { updateCollectionRouteHandler, getCharacters} from './db/update-collecti
 import Agent from './agents/agent.js';
 import ws from './routes/websocket.js';
 import 'dotenv/config';
-import { publish, redisSub } from './utils/redis.js';
+import { publish, getRedisSub } from './utils/redis.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -34,7 +34,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-ws(server, getCharacters, redisSub, collection);
+ws(server, getCharacters, getRedisSub, collection);
 app.use('/auth', authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToken, collection));
 app.use('/comics', collectionRouter(updateCollectionRouteHandler, publish, collection));
 app.use('/agent', agentRouter(Agent, collection));

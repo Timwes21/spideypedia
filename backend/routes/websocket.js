@@ -1,8 +1,8 @@
 import { WebSocketServer } from 'ws';
 
-async function ws(server, getCharacters, redisSub, collection){
+async function ws(server, getCharacters, getRedisSub, collection){
     const wss = new WebSocketServer({ server });
-    redisSub.subscribe("charUpdates", async(message)=>{
+    getRedisSub().subscribe("charUpdates", async(message)=>{
         const token = message;
         const updatedChars = await getCharacters(token, collection);
         
