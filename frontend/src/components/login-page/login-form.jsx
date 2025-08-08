@@ -59,6 +59,7 @@ export default function LoginForm(){
                 const { message, token } = data;
                 console.log(message);
                 localStorage.setItem("comicManagementToken", token);
+                fetch()
                 window.location.reload();
             }
             else{
