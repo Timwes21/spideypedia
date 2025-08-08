@@ -5,9 +5,6 @@ from langchain_core.runnables import Runnable
 from langchain_core.prompts import ChatPromptTemplate
 from utils.llm import get_update_details_from_llm, llm
 from models import convert_names_for_comic_details, comicBookDbTemplate
-import asyncio
-import json
-from utils.db import production_collection as collection
 
 
 
@@ -89,7 +86,3 @@ def get_chain(model, prompt) -> Runnable:
     prompt = ChatPromptTemplate.from_template(prompt +"{format}").partial(format=parser.get_format_instructions())
     chain = prompt | llm | parser
     return chain
-
-async def get_username(token: str):
-    user_info = await asyncio.to_thread(lambda: collection.find_one({"tokens": token}, {"_id": 0, "userInfo": 1}))
-    return user_info["username"]
