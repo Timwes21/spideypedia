@@ -18,4 +18,4 @@ function decryptToken(unparsedToken){
 
 }
 
-export {withDecryptToken, decryptToken};
+export { withDecryptToken, decryptToken };

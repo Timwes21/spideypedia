@@ -6,17 +6,19 @@ import { submitToAgentWs, undoRoute } from'../../../routes.js'
 export default function Agent(){
     const [ input, setInput ] = useState("");
     const [ isOpen, setIsOpen ] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(false)
-    const [messages, setMessages] = useState([
-    ]);
+    const [ reply, setReply ] = useState("");
+    const [ wsClosed, setWsClosed ] = useState(true);
+    const [ refreshWs, setRefreshWs ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
 
     const ws = useRef(null);
 
 
     useEffect(()=>{
-        ws.current = new WebSocket(submitToAgentWs);
+        ws.current = new WebSocket(submitToAgentWs, ["json", localStorage.getItem("comicManagementToken")]);
         ws.current.onopen  = () =>{
             console.log("ai assistant ready");
+            setWsClosed(false)
         }
         ws.current.onerror = (err) => {
             console.log(err);
@@ -25,10 +27,12 @@ export default function Agent(){
             console.log(typeof event.data);
             
             const data = JSON.parse(event.data);
-            data.loading && setMessages(prev=>[...prev, {"agent": data.loading}])
-            localStorage.setItem("start", data.start)
-            setMessages(prev=>[...prev, {"agent": data.output}])
-            setIsLoading(false);
+            console.log(data);
+            setReply(data.AI);
+        }
+
+        ws.current.onclose = () => {
+            setWsClosed(true);
         }
 
         return () => {
@@ -37,31 +41,20 @@ export default function Agent(){
             }
         };
 
-    }, [])
+    }, [refreshWs])
 
 
 
-
-    
-
-    function displayMessages(){
-        return messages.map((message, index)=>{
-            const [[key, value]] = Object.entries(message);
-            const className = key + "-message" + (index === messages.length-1? " new-message":"");
-            return <span className={className}>{value}</span>
-        })
-    }
 
 
     const send = () =>{
+        if (wsClosed){
+            setRefreshWs(!refreshWs);
+        }
         ws.current.send(JSON.stringify({
-                token: localStorage.getItem("comicManagementToken"),
-                input: input,
-                start: localStorage.getItem("start") | 0
-            }));
-        setMessages(prev=>[...prev, {"user": input}]);
+            input: input,
+        }));
         setInput("");
-        setIsLoading(true);
     }
 
     const undo = () => {
@@ -77,19 +70,25 @@ export default function Agent(){
         <>
             <button className={isOpen?"chat-button close": "chat-button"} onClick={()=>setIsOpen(!isOpen)}>Talk to Your Agent</button>
             <div className={isOpen? "agent-chat open": "agent-chat"}>
-                <div className="chat-header">
-                    <span>AGENT</span>
+
+                <div className="command-header">
+                    <span>AI COMMAND LINE</span>
                     <button className="close-chat-button" onClick={()=>setIsOpen(!isOpen)}>Close</button>
                 </div>
-                <div className="messages">
-                    {displayMessages()}
-                    {isLoading &&<span id="loading-message">loading...</span>}
-                </div>
-                <div className="user-reply">
-                    <button onClick={undo}>Undo</button>
+                <div className="command-input">
+                    <p>Add, Remove, or check if an issue exists</p>
                     <input value={input} onChange={(e)=>setInput(e.target.value)} type="text" />
+                </div>
+                <div className="command-buttons">
+                    <button onClick={undo}>Undo</button>
                     <button onClick={send}>Send</button>
                 </div>
+                <div className="command-output-con">
+                    <div className="command-output">
+                        {reply}
+                    </div>
+                </div>
+                
             </div>
         </>
     )

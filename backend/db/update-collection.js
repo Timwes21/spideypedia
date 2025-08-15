@@ -30,8 +30,16 @@ async function addToCharacter(data, collection){
     console.log("in addToCharacter \n");
     
     const { token, characterData } = data;
-    const {character, type, name, vol} = characterData
-    const key = `characters.${character}.${type}.${name}.vol ${vol}`;
+    const { character, type, name } = characterData
+    const key = `characters.${character}.${type}.${name}`;
+    const finalResult = await collection.updateOne({tokens : token},{$set: {[key]: {}}});
+    return finalResult;
+}
+
+async function addVolume(data, collection){
+    const { token, characterData } = data;
+    const { character, type, title, vol } = characterData
+    const key = `characters.${character}.${type}.${title}.vol ${vol}`;
     const finalResult = await collection.updateOne({tokens : token},{$set: {[key]: {}}});
     return finalResult;
 }
@@ -198,7 +206,8 @@ const updateCollectionRouteHandler = {
     "add-issue":addIssue,
     "delete-issue":deleteIssue,
     "update-details":updateDetails,
-    "delete-char":deleteChar
+    "delete-char":deleteChar,
+    "add-vol": addVolume
 }
 
 export { updateCollectionRouteHandler, getCharacters}

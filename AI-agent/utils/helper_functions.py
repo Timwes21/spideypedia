@@ -1,10 +1,11 @@
 from google.ai.generativelanguage_v1beta.types import Tool as GenAITool  
-from models import Tasks, FilterAndUpdateForRemove, FilterAndUpdateForAdd
+from utils.schemas import Tasks, FilterAndUpdateForRemove, FilterAndUpdateForAdd
+from utils.schemas import convert_names_for_comic_details, comicBookDbTemplate
 from langchain.output_parsers import PydanticOutputParser
 from langchain_core.runnables import Runnable
 from langchain_core.prompts import ChatPromptTemplate
 from utils.llm import get_update_details_from_llm, llm
-from models import convert_names_for_comic_details, comicBookDbTemplate
+import asyncio
 
 
 
@@ -86,3 +87,13 @@ def get_chain(model, prompt) -> Runnable:
     prompt = ChatPromptTemplate.from_template(prompt +"{format}").partial(format=parser.get_format_instructions())
     chain = prompt | llm | parser
     return chain
+
+async def get_username(collection, token):
+    res = await asyncio.to_thread(lambda: collection.find_one({"tokens": token}, {"userInfo": 1, "_id":0})) or {}
+    print(res)
+    user_info = res.get("userInfo", {})
+    return user_info.get("username", None)
+
+    
+
+    

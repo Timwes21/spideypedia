@@ -1,31 +1,22 @@
-from models import State, issueRundownTemplate, ComicDetails
+from utils.schemas import State, issueRundownTemplate, ComicDetails, Aggregates, comicBookDbTemplate
 from langchain.output_parsers import PydanticOutputParser
 from langchain_core.tools import tool
-
-from utils.llm import(
-    get_comic_details,
-    get_aggregates,
-)
+import json
 
 from utils.helper_functions import (
     google_search_with_filter, 
     get_update_details, 
     format_comic_details, 
     get_filter_and_update_keys, 
-    get_char_and_title
+    get_char_and_title,
+    get_chain
 )
 
 
-def check_collection(task, state: State):
-    aggregates = get_aggregates(task, state)
-    result = list(state['collection'].aggregate(aggregates))
-    return {"result": result}
-
-def add_comics(task, state: State):
+def add_comics(task, state: State=None):
     parser = PydanticOutputParser(pydantic_object=ComicDetails)
-    content = f"You are an ai agent that gets accurate info about the new issue the user is adding, but befroe the adding agent can add it to the colection, you need to get the required info about the issue the user is adding. Be sure to get the correct character, title type, title, volume, and issue number when researching, user input: {task}, {parser.get_format_instructions()} "
-    comic_details = google_search_with_filter(content, ComicDetails)
-    print("comic details: ", comic_details)
+    content = f"You are an ai agent that gets accurate info about the new issue the user is adding, but befroe the adding agent can add it to the colection, you need to get the required info about the issue the user is adding. Be sure to get the correct character, title type, title, volume, and issue number when researching, user input, and avoid grabing numeric citations like [1, 4, 6]: {task}, {parser.get_format_instructions()} "
+    comic_details: ComicDetails = google_search_with_filter(content, ComicDetails)
     update_details = get_update_details(task)
     formatted_details = format_comic_details(comic_details.model_dump())
     character, title = get_char_and_title( update_details, state["token"], state["collection"])
@@ -55,6 +46,5 @@ def remove(task, state: State):
 actions = {
     "add_general": add_general,
     "remove": remove, 
-    "check_collection": check_collection,
     "add_comics": add_comics
 }

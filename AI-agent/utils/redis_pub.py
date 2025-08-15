@@ -1,16 +1,16 @@
 import redis.asyncio as redis
+import json
 # import redis
 import os 
 from dotenv import load_dotenv
 load_dotenv()
 
 url = os.environ['REDIS_URL']
-redis_pub = redis.from_url(url)
+r = redis.from_url(url, decode_responses=True)
 
 # Publish function
 async def publish(token: str):
-    await redis_pub.publish("charUpdates", token)
+    await r.publish("charUpdates", token)
 
 
-# def get_chat():
 

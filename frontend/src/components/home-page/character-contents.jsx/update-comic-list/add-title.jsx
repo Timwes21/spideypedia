@@ -5,7 +5,6 @@ const addTitleApi = comicsBase + "/add-title";
 export default function AddTitle({ character }){
     const [ type, setType ] = useState();
     const [ name, setName ] = useState();
-    const [ vol, setVol] = useState();
     const [ buttonPressed, setButtonPressed ] = useState(false);
     
 
@@ -13,11 +12,10 @@ export default function AddTitle({ character }){
         setButtonPressed(false);
         setType("");
         setName("");
-        setVol("")
     }
     
     const addButton=()=>{
-        (type && name && vol) && fetch(addTitleApi, {
+        (type && name) && fetch(addTitleApi, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -26,7 +24,6 @@ export default function AddTitle({ character }){
                     character, 
                     type: type, 
                     name: name, 
-                    vol: vol
                 } 
             })
         })
@@ -48,8 +45,6 @@ export default function AddTitle({ character }){
             </select>
             <span className="label">Name</span>
             <input type="text" value={name} onChange={(e)=>setName(e.target.value)} name="" id="" />
-            <span className="label">Vol</span>
-            <input type="text" value={vol} onChange={(e)=>setVol(e.target.value)} name="" id="" />
             <div className="buttons-add-title">
 
             <button onClick={addButton}>Submit</button>

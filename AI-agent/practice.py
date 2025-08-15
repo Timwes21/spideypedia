@@ -1,12 +1,4 @@
-def dec(func):
-    def wrapper(*args):
-        print("func is running")
-        func(*args)
-        print("func is done runngin")
-    return wrapper
+from utils.redis_pub import clear_chat
+import asyncio
 
-@dec
-def multiply(nums):
-    print(nums["num1"] * nums["num2"])
-
-multiply({"num1":1, "num2": 3})
+asyncio.run(clear_chat("timwes21"))

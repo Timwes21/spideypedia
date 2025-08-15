@@ -1,18 +1,15 @@
 from fastapi import Request, FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from graph import router_workflow
+from Graphs.ChatGraph.graph import graph
 from utils.db import production_collection
-import time
-import asyncio
-from redis_pub import publish
+from utils.redis_pub import publish
+from utils.helper_functions import google_search_with_filter
 import base64
-from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from utils.llm import llm
-from models import PhotoUploadInfo, convert_names_for_comic_details
+from utils.schemas import PhotoUploadInfo
 from langchain.output_parsers import PydanticOutputParser
 from utils.helper_functions import format_comic_details, get_char_and_title, google_search_with_filter, get_username
-
 
 
 app = FastAPI()
@@ -31,40 +28,34 @@ app.add_middleware(
 )
 
 
-chats = {}
-
-
-
-def get_chat(token, start):
-    if token in chats:
-        if time.time() - start > 3600:     
-            del chats[token]
-            return []
-        return chats[token]
-    return []
-            
-
 
 
 
 @app.websocket("/ws")
 async def talk_to_agent(ws: WebSocket):
-    await ws.accept()
-    # username = await get_username()
+    token_proto = ws.headers.get("sec-websocket-protocol", "")
+    print(token_proto)
+    if not token_proto:
+        print("Websocket closing due to no token")
+        ws.close(reason="token is not there")
+        return 
+    token = token_proto.split(", ")[1]
+    await ws.accept(subprotocol="json")
+    
     try: 
         while True:
-            data = await ws.receive_json()
-            start = data.get("start", 1)
-            token = data['token']
-            user_input = data['input']
-            chat = get_chat(token, float(start))
-            chat += [ HumanMessage(user_input)]
-            print(chat)
-            state = await router_workflow.ainvoke({"input": user_input, "token": token, "collection": production_collection, "chat": chat})
-            output = state['output']
-            chat += [AIMessage(output)]
-            chats[token] = chat
-            await ws.send_json({"output": output, "start": time.time()})
+            data = await ws.receive_text()
+            print("here")
+            state = await graph.ainvoke(
+                {
+                    "input": data,
+                    "token": token,
+                    "collection": production_collection,
+                }
+            )
+            ai_message = {"AI": state['output']}
+            await ws.send_json(ai_message)
+            
             
     except WebSocketDisconnect as e:
         print(e)
@@ -121,9 +112,6 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
     await publish(token)
 
 
-
-    
-    
     
 if __name__ == "__main__":
     import uvicorn
