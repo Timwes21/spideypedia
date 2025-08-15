@@ -6,7 +6,7 @@ from utils.helper_functions import (
     get_tasks_chain
 )
 
-from models import FilterAndUpdateForAdd, FilterAndUpdateForRemove, convert_names_for_comic_details, UpdateComics, issueRundownTemplate, ComicDetails, Tasks
+from utils.schemas import FilterAndUpdateForAdd, FilterAndUpdateForRemove, convert_names_for_comic_details, UpdateComics, issueRundownTemplate, ComicDetails, Tasks
 
     
     

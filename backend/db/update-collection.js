@@ -108,7 +108,7 @@ async function deleteIssue(data, collection){
             delete chars[character][type][titleName];
             if ((Object.keys(chars[character][type]).length === 0)){
                 delete chars[character][type];
-                if((Object.keys(chars[character]).length === 0)){
+                if ((Object.keys(chars[character]).length === 0)){
                     delete chars[character];
                 }
             }

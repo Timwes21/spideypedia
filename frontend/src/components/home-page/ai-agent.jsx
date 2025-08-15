@@ -68,7 +68,7 @@ export default function Agent(){
 
     return(
         <>
-            <button className={isOpen?"chat-button close": "chat-button"} onClick={()=>setIsOpen(!isOpen)}>Talk to Your Agent</button>
+            <button className={isOpen?"chat-button close": "chat-button"} onClick={()=>setIsOpen(!isOpen)}>Command Line</button>
             <div className={isOpen? "agent-chat open": "agent-chat"}>
 
                 <div className="command-header">
