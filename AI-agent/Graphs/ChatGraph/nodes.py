@@ -89,7 +89,7 @@ def check_comic_collection(task, state: State):
 @print_header(action="formulate-response")
 def formulate_response(state: State):
     results = state["results"]
-    user_input = state["chat"]
+    user_input = state["input"]
     response = llm.invoke([
             SystemMessage(
                 content=f"""You are part of an agentic system that maanges a users comic collection

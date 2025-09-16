@@ -76,17 +76,15 @@ export default function Agent(){
                     <button className="close-chat-button" onClick={()=>setIsOpen(!isOpen)}>Close</button>
                 </div>
                 <div className="command-input">
-                    <p>Add, Remove, or check if an issue exists</p>
+                    <p style={{color: "white"}}>Add, Remove, or check if an issue exists</p>
                     <input value={input} onChange={(e)=>setInput(e.target.value)} type="text" />
                 </div>
                 <div className="command-buttons">
                     <button onClick={undo}>Undo</button>
                     <button onClick={send}>Send</button>
                 </div>
-                <div className="command-output-con">
-                    <div className="command-output">
-                        {reply}
-                    </div>
+                <div className="command-output">
+                    {reply}
                 </div>
                 
             </div>

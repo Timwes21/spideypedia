@@ -1,7 +1,7 @@
 
 const developing = false;
 const base = developing?"http://localhost:8000":"https://spideypedia-production.up.railway.app";
-const wsLink = developing? "ws://localhost:8000" : "wss://spideypedia-production.up.railway.app";
+const wsLink = developing? "ws://localhost:8000":"wss://spideypedia-production.up.railway.app";
 const comicsBase = base + "/comics";
 const authBase = base + "/auth";
 const undoRoute = developing? "http://127.0.0.1:8000/undo": "https://intuitive-smile-production.up.railway.app/undo";

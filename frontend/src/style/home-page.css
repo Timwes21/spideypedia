@@ -356,12 +356,12 @@ nav{
   width: 400px;
   height: 40%;
   transition: .4s ease;
-  background-color: #b3b3b34e;
+  background-color: #000000e6;
   border-radius: 10px;
   box-shadow: 0px 0px 10px black;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(10px);
+  
 
 
 
@@ -392,7 +392,6 @@ nav{
 }
 .command-input p{
   font-family: "comic-lettering";
-
 }
 .command-input input{
   width: 70%;
@@ -403,21 +402,15 @@ nav{
   width: 100%;
   justify-content: center;
 }
-.command-output-con{
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50%;
-  
-
-}
 .command-output{
-  width: 70%;
-  background-color: white;
+  width: 80%;
+  background-color: rgb(40, 40, 40);
   border: 1px solid black;
-  height: 50%;
-  border-radius: 10px;
+  height: 40%;
+  justify-self: center;
+  align-self: center;
+  color: white;
+
 
 }
 #logout{

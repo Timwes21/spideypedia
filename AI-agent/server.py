@@ -44,19 +44,22 @@ async def talk_to_agent(ws: WebSocket):
     
     try: 
         while True:
-            data = await ws.receive_text()
-            print("here")
-            state = await graph.ainvoke(
-                {
-                    "input": data,
-                    "token": token,
-                    "collection": production_collection,
-                }
-            )
-            ai_message = {"AI": state['output']}
-            await ws.send_json(ai_message)
+            try: 
+                data = await ws.receive_text()
+                print("here")
+                state = await graph.ainvoke(
+                    {
+                        "input": data,
+                        "token": token,
+                        "collection": production_collection,
+                    }
+                )
+                ai_message = {"AI": state['output']}
+                await ws.send_json(ai_message)
+            except Exception as e:
+                await ws.send_json({"AI": "error"})
             
-            
+
     except WebSocketDisconnect as e:
         print(e)
         
@@ -92,7 +95,7 @@ async def add_by_photo(file: UploadFile = File(...), token = Form(...)):
             ],
     )]
     
-    formatted_results: PhotoUploadInfo = google_search_with_filter(messages, PhotoUploadInfo)
+    formatted_results: PhotoUploadInfo = google_search_with_filter(messages, filter=PhotoUploadInfo)
     issue_rundown_draft = formatted_results.model_dump()
     not_issue_rundown_keys = ["character", "title_type", "title", "vol", "issue_number"]
 

@@ -151,7 +151,7 @@ async function updateDetails(data, collection) {
     
     
     if (path){
-        console.log('here');
+        console.log('path is here');
         
         const imageData = chars[character][type][titleName][vol][issueNumber]?.image || null
         if (imageData){
@@ -201,13 +201,13 @@ async function deleteChar(data, collection){
 
 
 const updateCollectionRouteHandler = {
-    "add-character":addCharacter,
-    "add-title":addToCharacter,
-    "add-issue":addIssue,
-    "delete-issue":deleteIssue,
-    "update-details":updateDetails,
-    "delete-char":deleteChar,
-    "add-vol": addVolume
+    "add-character" :addCharacter,
+    "add-title" :addToCharacter,
+    "add-issue" :addIssue,
+    "delete-issue" :deleteIssue,
+    "update-details" :updateDetails,
+    "delete-char" :deleteChar,
+    "add-vol" :addVolume
 }
 
 export { updateCollectionRouteHandler, getCharacters}

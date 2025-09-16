@@ -10,11 +10,11 @@ import asyncio
 
 
 
-def google_search_with_filter(content, model):
+def google_search_with_filter(content, filter):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
     print(result.content)
     print(type(result.content))
-    return llm.with_structured_output(model).invoke(result.content)
+    return llm.with_structured_output(filter).invoke(result.content)
     
 def google_search(content):
     result = llm.invoke(content, tools=[GenAITool(google_search={})])
@@ -66,18 +66,19 @@ def get_char_and_title(details, token, collection) -> set:
 
     
     title_map = {
-            char_name : {
-                name.lower(): name
-                for name in characters[char_name][title_type].keys()
-            }
-            for char_name in characters.keys() if title_type in characters[char_name]
+        char_name: { 
+            name.lower(): name # spider-man: Spider-Man
+            for name in characters[char_name][title_type].keys()
         }
+        for char_name in characters.keys() if title_type in characters[char_name]
+    }
     
     print("Title Map: ", title_map, "\n")
     char_lowered = character.lower()
     if char_lowered in character_map:
         character = character_map[char_lowered]
         title_lowered = title.lower()
+        print(title_lowered)
         if title_lowered in title_map.get(character, []):
             title = title_map[character][title_lowered]
     return (character, title)
