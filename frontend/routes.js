@@ -1,12 +1,12 @@
 
-const developing = true;
+const developing = import.meta.env.VITE_DEVELOPING;
 const testingBackendBase = import.meta.env.VITE_BASE_ROUTE;
 const testingAIBackendBase = import.meta.env.VITE_AI_BASE_ROUTE;
 console.log(testingBackendBase);
 
-
-const backendBase = developing?`http://${testingBackendBase}`:"https://spideypedia-production.up.railway.app";
-const aiBackend = developing?`http://${testingAIBackendBase}`:"https://intuitive-smile-production.up.railway.app"
+const http = developing == "true" ?"http": "https";
+const backendBase = `${http}://${testingBackendBase}`;
+const aiBackend = `${http}://${testingAIBackendBase}`;
 
 
 const wsLink = developing? `ws://${testingBackendBase}`: "";
