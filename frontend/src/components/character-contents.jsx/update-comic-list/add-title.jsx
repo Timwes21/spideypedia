@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { comicsBase } from "../../../../../routes.js";
+import { routesMap } from "../../../../routes.js";
 
-const addTitleApi = comicsBase + "/add-title";
 export default function AddTitle({ character }){
     const [ type, setType ] = useState();
     const [ name, setName ] = useState();
@@ -15,7 +14,7 @@ export default function AddTitle({ character }){
     }
     
     const addButton=()=>{
-        (type && name) && fetch(addTitleApi, {
+        (type && name) && fetch(routesMap.addTitle, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -23,7 +22,7 @@ export default function AddTitle({ character }){
                 characterData:{    
                     character, 
                     type: type, 
-                    name: name, 
+                    titleName: name, 
                 } 
             })
         })

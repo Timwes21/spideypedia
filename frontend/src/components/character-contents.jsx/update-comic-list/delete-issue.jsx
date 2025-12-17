@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { comicsBase } from "../../../../../routes.js"
+import { routesMap } from "../../../../routes.js"
+
 export function DeleteIssue({character, type, titleName, vol, issueNumber}){
     const [confirm, setConfirm] = useState(false)
 
     const deleteIssue =() => {
         // console.log("char: delete", localStorage.getItem("comicManagementToken"));
         
-        fetch(comicsBase + "/delete-issue", {
+        fetch(routesMap.deleteIssue, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({token: localStorage.getItem("comicManagementToken"), 
                 characterData:{
-                    character: character, 
-                    type: type, 
-                    titleName: titleName, 
-                    vol: vol, 
-                    issueNumber: issueNumber
+                    character,
+                    type,
+                    titleName,
+                    vol,
+                    issueNumber
                 } 
             })
         })

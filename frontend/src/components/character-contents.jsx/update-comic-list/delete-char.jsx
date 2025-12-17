@@ -1,13 +1,13 @@
 import { useState } from "react"
-import { comicsBase } from "../../../../../routes.js";
+import { routesMap } from "../../../../routes.js";
 
 export function DeleteChar({character}){
     const deleteChar = () =>{
-        fetch(comicsBase+ "/delete-char", 
+        fetch(routesMap.deleteChar, 
             {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ token: localStorage.getItem("comicManagementToken"), character: character})
+                body: JSON.stringify({ token: localStorage.getItem("comicManagementToken"), character})
             })
             .then(setConfirm(!confirm))
     }

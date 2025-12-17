@@ -9,9 +9,10 @@ function authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToke
         const result = await authorizeUsername(username, collection);
     
         if (result){
-            console.log('here');
             return next(); 
         }
+        console.log("not a good username");
+        
         res.status(401).json({message: "username already exists"});
     }
 
@@ -21,14 +22,14 @@ function authRouter(createUser, authorizeUser, authorizeUsername, forgetUserToke
         const data = req.body;
         console.log('in creation');
         
-    try{
-        const token = await createUser(data, collection);
-        res.status(200).json({token: token});
-    }
-    catch(err){
-        res.status(500).send({err: err});
-        console.log(err);
-    }
+        try {
+            const token = await createUser(data, collection);
+            res.status(200).json({token: token});
+        }
+        catch(err) {
+            res.status(500).send({err: err});
+            console.log(err);
+        }
 })
 
 router.post("/login", async(req, res)=>{

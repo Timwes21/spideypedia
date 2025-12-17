@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { authBase } from "../../../routes.js";
-const createUserApi = authBase + "/create-user";
-const loginApi = authBase + "/login";
+import { routesMap } from "../routes.js";
 
 export default function LoginForm(){
     const [ username, setUsername ] = useState("");
@@ -17,44 +15,45 @@ export default function LoginForm(){
             setCreateAccountMessage("Username and Password must be greater than 6 characters");
             return;
         }
-        console.log();
         
-        fetch(createUserApi, {
+        fetch(routesMap.createUser, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({username: username, password: password, email: email, phoneNumber: phoneNumber})
+            body: JSON.stringify({username, password, email, phoneNumber})
         })
         .then(async(response) => {
+            console.log(response);
             const status = response.status;
             const data = await response.json();
+            console.log(data.message);
             if (status === 200){
-                console.log(data.message);
+                
                 localStorage.setItem("comicManagementToken", data.token);
                 window.location.reload();
+                return data.message;
             }
-            return data.message;
         })
         .then(message=>{
             setCreateAccountMessage(message);
         })
         .catch(err=>{
             console.log(err);
-            setCreateAccountMessage(err.message);
+            setCreateAccountMessage("There was an error");
         })
     }
 
     function login(){
-        fetch(loginApi, {
+        fetch(routesMap.login, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({username: username, password: password})
+            body: JSON.stringify({username, password})
         })
         .then(async(response)=>{
-            
-            
             const status = response.status;
             const data = await response.json()
+            console.log(response);
             
+            console.log("here is the data", data);
             if (status == 200){
                 const { message, token } = data;
                 console.log(message);

@@ -1,28 +1,32 @@
 import { useState } from "react";
-import { comicsBase } from "../../../../../routes";
+import { routesMap } from "../../../../routes";
 
 
 export default function AddVol({ character, type, title}){
     const [ vol, setVol ] = useState("");
     const [ visible, setVisible ] = useState(false);
-    console.log(title);
     
     const addButton = <button className="make-smaller" onClick={()=>setVisible(!visible)}>Add Volume</button>         
 
 
     const add = () => {
-        vol && fetch(comicsBase + "/add-vol", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
+        const addVolObj = {
                 token: localStorage.getItem("comicManagementToken"), 
                 characterData: {
                     character, 
                     type, 
-                    title,
-                    vol :vol 
+                    titleName: title,
+                    vol 
                 } 
-            })
+            }
+
+        console.log(addVolObj);
+        
+
+        vol && fetch(routesMap.addVol, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(addVolObj)
         })
         .then(()=>{
           clearForm()

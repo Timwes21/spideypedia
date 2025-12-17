@@ -1,6 +1,6 @@
 import IssueDetails from "./issue-details.jsx";
 import { DeleteIssue } from "./update-comic-list/delete-issue.jsx";
-import useVisibility from "../../../hooks/visibility.jsx";
+import useVisibility from "../../hooks/visibility.jsx";
 
 export default function Issues({character, type, titleName, vol, issues, visible}){
     const [visibility, toggleVisibility] = useVisibility()

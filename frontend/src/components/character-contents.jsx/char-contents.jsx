@@ -1,5 +1,5 @@
 import Titles from "./titles.jsx"
-import useVisibility from "../../../hooks/visibility.jsx";
+import useVisibility from "../../hooks/visibility.jsx";
 
 export default function CharContents({ charData, visible, character }){
     const [ visibility, toggleVisibility ] = useVisibility();

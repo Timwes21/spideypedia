@@ -1,9 +1,9 @@
-import { authBase } from "../../../routes.js";
+import { routesMap } from "../../routes.js";
 
 export function NavBar(){
     function logout(){
         localStorage.getItem("comicManagementToken");
-        fetch(authBase + "/logout", {
+        fetch(routesMap.logout, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({token: localStorage.getItem("comicManagementToken")})

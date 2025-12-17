@@ -2,7 +2,7 @@ import CharContents from "./char-contents.jsx";
 import AddTitle from "./update-comic-list/add-title.jsx";
 import { DeleteChar } from "./update-comic-list/delete-char.jsx";
 import AddChar from "./update-comic-list/add-char.jsx";
-import useCharList from "../../../hooks/useCharList.jsx";
+import useCharList from "../../hooks/useCharList.jsx";
 
 
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { wsLink } from "../../routes";
+import { routesMap } from "../../routes";
 import useVisibility from "./visibility";
 
 
@@ -7,18 +7,24 @@ export default function useCharList(){
     const token = localStorage.getItem("comicManagementToken");
     const [ characters, setCharacters ] = useState("")
     const ws = useRef(null)
+    console.log(routesMap.wsLink);
+    
     
     
     function loadChars(){
-        ws.current = new WebSocket(wsLink)
+        ws.current = new WebSocket(routesMap.wsLink)
         ws.current.onopen = () =>{
-                ws.current.send(JSON.stringify(token));
+                ws.current.send(token);
+                console.log("sent token");
+                
         }
             
         ws.current.onmessage = (event) =>{
-            console.log(JSON.parse(event.data));
+            console.log("here");
+            
             const data = JSON.parse(event.data);
-            setCharacters(data.message);            
+            console.log(data);
+            setCharacters(data);            
         }
     
         ws.current.onerror = (error) =>{

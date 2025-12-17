@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { comicsBase } from "../../../../../routes.js";
+import { routesMap } from "../../../../routes";
 // import { comicsBase } from "./";
-const addCharacterApi = comicsBase + "/add-character"
 
 export default function AddChar(){
 
@@ -12,13 +11,14 @@ export default function AddChar(){
     function addCharacter(){
         console.log("character");
         console.log(token);
+        console.log(addCharacterApi);
         
         console.log(character);
         console.log("inbetween");
         
         setVisible(!visible)
         setCharacter("");
-        character && fetch(addCharacterApi, {
+        character && fetch(routesMap.addChar, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({token: token, character: character})

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { submitToAgentWs, undoRoute } from'../../../routes.js'
+import { submitToAgentWs, routesMap } from'../../routes.js'
 
 
 
@@ -44,13 +44,11 @@ export default function Agent(){
     }, [refreshWs])
 
 
-
-
-
-    const send = () =>{
+    const send = async() =>{
         if (wsClosed){
             setRefreshWs(!refreshWs);
         }
+        await (!wsClosed && Promise.resolve())
         ws.current.send(JSON.stringify({
             input: input,
         }));
@@ -58,7 +56,7 @@ export default function Agent(){
     }
 
     const undo = () => {
-        fetch(undoRoute, {
+        fetch(routesMap.undoRoute, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({token: localStorage.getItem("comicManagementToken")})

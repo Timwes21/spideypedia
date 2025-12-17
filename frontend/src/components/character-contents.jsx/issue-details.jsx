@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { comicsBase } from "../../../../routes.js";
+import { useEffect, useState } from "react";
+import { routesMap } from "../../../routes.js";
 
 
 export default function IssueDetails({character, type, titleName, vol, issueNumber, issueDetails, visible}){
@@ -11,10 +11,18 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
     const [ issueDetailsKeys, setIssueDetailsKeys ] = useState(Object.keys(issueDetailList));
     const [ issueDetailsValues, setIssueDetailsValues ] = useState(Object.values(issueDetailList));
     const [ imageFile, setImageFile ] = useState();
-    const [ image, setImage ] = useState(()=>{
-            return issueDetails.image?.url || null
+    const [ image, setImage ] = useState();
+    const [ fallbackImage, setFallBackImage ] = useState();
 
-    });
+
+    useEffect(()=> {
+        let imageName = issueDetails?.imageName || null
+        if (imageName){
+            imageName = imageName.replaceAll("/", "~~")
+            const image = routesMap.getIssueImage(imageName);
+            setImage(image); setFallBackImage(image);
+        }
+    }, [])
 
     
     const save = () => {
@@ -25,18 +33,19 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
         const formData = new FormData();
         formData.append('token', localStorage.getItem("comicManagementToken"));
         formData.append('characterData', JSON.stringify({
-            character: character, 
-            type: type, 
-            titleName: titleName, 
-            vol: vol, 
-            issueNumber: issueNumber
+            character, 
+            type, 
+            titleName, 
+            vol, 
+            issueNumber
         }));
-        formData.append("image", imageFile);
+        imageFile && formData.append("image", imageFile);
+        image && formData.append("prevImage", image)
         formData.append("issueDetailList", JSON.stringify({...combine}));
-        fetch(comicsBase + "/update-details", {
+        fetch(routesMap.updateDetails, {
             method: "POST",
             body: formData
-            });
+        });
         
         
     }
@@ -45,6 +54,7 @@ export default function IssueDetails({character, type, titleName, vol, issueNumb
         setIssueDetailsKeys(Object.keys(issueDetailList))
         setIssueDetailsValues(Object.values(issueDetailList))
         setEdit(!edit)
+        setImage(fallbackImage)
     }
             
     function renderButtons(){

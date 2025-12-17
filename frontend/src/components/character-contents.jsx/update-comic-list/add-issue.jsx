@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { comicsBase } from "../../../../../routes.js";
+import { routesMap } from "../../../../routes.js";
 
-const addRouteApi = comicsBase + "/add-issue"
 export default function AddIssue({titleName, type, character, vol}){
     const [ issueNumber, setIssueNumber ] = useState();
     const [ buttonPressed, setButtonPressed ] = useState();
@@ -10,20 +9,19 @@ export default function AddIssue({titleName, type, character, vol}){
 
     function add(){
         if (issueNumber) {
-        const formData = new FormData();
-        formData.append('token', localStorage.getItem("comicManagementToken"));
-        formData.append('path', `${character}/${type}/${titleName}/${vol}/${issueNumber}`);
-        formData.append('issueDetails', JSON.stringify({
-            character: character,
-            type: type,
-            titleName: titleName,
-            vol: vol,
-            issueNumber: issueNumber
-        }));
-        formData.append("image", imageFile);
+            const formData = new FormData();
+            formData.append('issue_details', JSON.stringify({
+                character: character,
+                title_type: type,
+                title: titleName,
+                vol: vol,
+                issue_number: issueNumber
+            }));
+            imageFile && formData.append("image", imageFile);
 
-            fetch(addRouteApi, {
+            fetch(routesMap.addIssue, {
                 method: "POST",
+                headers: {"token": localStorage.getItem("comicManagementToken")},
                 body: formData
                 
             })

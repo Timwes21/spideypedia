@@ -17,7 +17,7 @@ class State(TypedDict):
 
 
 class ComicDetails(BaseModel):
-    name: str = Field(description="include the official name for the story, if there is more than one story in an issue include both names seperated by a ; example the name of the story from Amazing Spider-man issue 5 vol 1 is 'Marked for Destruction by Dr. Doom!' ")
+    name: str = Field(description="include the official name for the story, if there is more than one story in an issue include both names seperated by a '/'. Example: the name of the story from Amazing Spider-man issue 1 vol 1 is 'Spider-Man, Freak! Public Menace! / The Chameleon Strikes!' ")
     artist: str = Field(description="the artist for the issue")
     writer: str = Field(description="the writer for the issue")
     first_appearances: str | None = Field(description="any possible first appearances, leave blank if no", default=None)

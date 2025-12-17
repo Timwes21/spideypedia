@@ -1,4 +1,2 @@
-from utils.redis_pub import clear_chat
-import asyncio
-
-asyncio.run(clear_chat("timwes21"))
+a = 3
+print(3//2)

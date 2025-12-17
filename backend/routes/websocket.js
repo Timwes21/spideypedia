@@ -5,17 +5,17 @@ async function ws(server, getCharacters, getRedisSub, collection){
     getRedisSub().subscribe("charUpdates", async(message)=>{
         const token = message;
         const updatedChars = await getCharacters(token, collection);
-        
-    wss.clients.forEach(client=>{
-        if (client.readyState === client.OPEN && client.token === token){
-            client.send(JSON.stringify({message: updatedChars}))
-        }
+            
+        wss.clients.forEach(client=>{
+            if (client.readyState === client.OPEN && client.token === token){
+                client.send(JSON.stringify({message: updatedChars}))
+            }
+        })
     })
-})
 
     wss.on("connection", (ws)=>{
         ws.on("message", async(message)=>{
-            try{
+            try {
                 const token = JSON.parse(message);
                 
                 ws.token = token;

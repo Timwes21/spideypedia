@@ -1,6 +1,7 @@
 import Volumes from "./volumes.jsx"
-import useVisibility from "../../../hooks/visibility.jsx";
+import useVisibility from "../../hooks/visibility.jsx";
 import AddVol from "./update-comic-list/add-vol.jsx";
+import DeleteVolume from "./update-comic-list/delete-vol.jsx";
 
 export default function Titles({ title, visible, type, character }){
     const [issuesVisibility, toggleVisibility] = useVisibility()
@@ -13,6 +14,7 @@ export default function Titles({ title, visible, type, character }){
                 <div key={titleName} className="title">
                     <strong className="title-name" onClick={()=>toggleVisibility(titleName)}>{titleName}</strong> 
                     <AddVol title={titleName} type={type} character={character}/>
+                    {/* <DeleteVolume title={titleName} type={type} character={character}/> */}
                     <Volumes volumes={volumes} titleName={titleName} type={type} character={character} visible={issuesVisibility[titleName]}/>                  
                 </div>
             ))}
